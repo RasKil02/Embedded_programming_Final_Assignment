@@ -21,6 +21,7 @@
 #define HIGH_PRIO 3
 
 QueueHandle_t key_queue;
+QueueHandle_t uart_queue_handler;
 
 static void setupHardware(void)
 /*****************************************************************************
@@ -42,8 +43,10 @@ int main(void)
     setupHardware();
 
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) ); // Is this correct?
+    uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) ); 
 
-
+    xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( status_led_task, "Status_led", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( red_led_task,    "Red_led",    USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );

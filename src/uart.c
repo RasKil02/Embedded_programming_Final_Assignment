@@ -26,10 +26,11 @@
 #include "systick_frt.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 /*****************************    Defines    *******************************/
 
 /*****************************   Constants   *******************************/
-
+extern QueueHandle_t uart_queue_handler;
 /*****************************   Variables   *******************************/
 
 /*****************************   Functions   *******************************/
@@ -39,7 +40,7 @@ BOOLEAN uart0_put_q( INT8U ch )
 *   Function : See module specification (.h-file).
 *****************************************************************************/
 {
-    xQueueSend( queueHandler, &ch, portMAX_DELAY );
+    xQueueSend( uart_queue_handler, &ch, portMAX_DELAY );
     return( 1 );
 }
 
@@ -48,7 +49,7 @@ BOOLEAN uart0_get_q( INT8U *pch )
 *   Function : See module specification (.h-file).
 *****************************************************************************/
 {
-    return( xQueueReceive( queueHandler, pch, portMAX_DELAY ) );
+    return( xQueueReceive( uart_queue_handler, pch, portMAX_DELAY ) );
 }
 
 BOOLEAN uart0_rx_rdy()
@@ -93,7 +94,7 @@ extern void uart_rx_task( void *pvParameters )
         if( uart0_rx_rdy() )
         {
             INT8U ch = uart0_getc();
-            xQueueSend( queueHandler, &ch, portMAX_DELAY );
+            xQueueSend( uart_queue_handler, &ch, portMAX_DELAY );
         }
         else
         {
@@ -113,7 +114,7 @@ extern void uart_tx_task( void *pvParameters )
     while( 1 )
     {
 
-        if( xQueueReceive( queueHandler, &ch, portMAX_DELAY) == pdPASS)     // If possible to get data from queue
+        if( xQueueReceive( uart_queue_handler, &ch, portMAX_DELAY) == pdPASS)     // If possible to get data from queue
         {
             while( !uart0_tx_rdy() )                                        // Wait as long UART is not ready to send
             {
