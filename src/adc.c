@@ -4,10 +4,31 @@
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+
+extern QueueHandle_t adc_queue_handler;
+
 
 INT16U get_adc()
 {
   return( ADC0_SSFIFO3_R );
+}
+
+
+void adc_task( void *pvParameters )
+/*****************************************************************************
+*   Function : See module specification (.h-file).
+*****************************************************************************/
+{
+    while( 1 )
+    {
+        INT16U adc_value = get_adc();
+
+        xQueueSend( adc_queue_handler, &adc_value, 0);      // Put adc value from potentiometer in queue
+
+        vTaskDelay( pdMS_TO_TICKS( 10 ) );
+    }
 }
 
 init_adc()
