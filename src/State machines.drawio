@@ -1,0 +1,708 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Side-1" id="t3-6nRoxe-CAheIFR2sp">
+    <mxGraphModel dx="2404" dy="1271" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-34" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="150" y="155" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-35" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-34" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="UART communication" vertex="1">
+          <mxGeometry relative="1" x="-0.057" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="IDLE" vertex="1">
+          <mxGeometry height="80" width="80" x="280" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-7" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-9" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Cash" vertex="1">
+          <mxGeometry relative="1" x="0.1429" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-8" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="390" />
+              <mxPoint x="420" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-10" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-8" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Card" vertex="1">
+          <mxGeometry relative="1" x="0.0355" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Payment" vertex="1">
+          <mxGeometry height="80" width="80" x="280" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-3" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-1" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-2" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="150" y="290" as="sourcePoint" />
+            <mxPoint x="200" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-4" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Drink chosen" vertex="1">
+          <mxGeometry relative="1" x="-0.2473" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-16" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="660" />
+            </Array>
+            <mxPoint x="240" y="610" as="sourcePoint" />
+            <mxPoint x="240" y="670" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-25" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-16" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Finished returning cash" vertex="1">
+          <mxGeometry relative="1" x="0.2008" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-19" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="Q9ZoplDKa_EXOp9t4pDC-17" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-22" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-19" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Cash received" vertex="1">
+          <mxGeometry relative="1" x="-0.1052" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Receiving cash" vertex="1">
+          <mxGeometry height="80" width="80" x="200" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-13" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="420" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-14" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-13" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Correct password&lt;div&gt;(both odd or even)&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1357" y="-3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Wait for password" vertex="1">
+          <mxGeometry height="80" width="80" x="380" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-11" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-6" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-6" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="510" />
+              <mxPoint x="500" y="460" />
+            </Array>
+            <mxPoint x="500" y="510" as="sourcePoint" />
+            <mxPoint x="550" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-12" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Incorrect password" vertex="1">
+          <mxGeometry relative="1" x="-0.5011" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Produce choice" vertex="1">
+          <mxGeometry height="80" width="80" x="380" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Return cash" vertex="1">
+          <mxGeometry height="80" width="80" x="200" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-20" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-5" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-5" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="550" />
+              <mxPoint x="160" y="450" />
+            </Array>
+            <mxPoint x="110" y="600" as="sourcePoint" />
+            <mxPoint x="160" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-21" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Insuficient funds" vertex="1">
+          <mxGeometry relative="1" x="0.0986" y="-14" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-26" edge="1" parent="1" style="curved=1;endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="660" />
+              <mxPoint x="690" y="530" />
+            </Array>
+            <mxPoint x="460" y="660" as="sourcePoint" />
+            <mxPoint x="580" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-27" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-26" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Production finished/Time og day&lt;div&gt;product type, price, amount,&amp;nbsp;&lt;/div&gt;&lt;div&gt;card number or CASH&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1146" y="39" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-31" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-30" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Log product choice" vertex="1">
+          <mxGeometry height="80" width="80" x="530" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-36" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Change product price" vertex="1">
+          <mxGeometry height="80" width="80" x="70" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-37" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-36" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="90" />
+              <mxPoint x="190" y="70" />
+            </Array>
+            <mxPoint x="90" y="90" as="sourcePoint" />
+            <mxPoint x="140" y="40" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-38" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Return cash (blink green LED)" vertex="1">
+          <mxGeometry height="80" width="80" x="1240" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-39" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;MAIN State Machine&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="250" x="40" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-40" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;LED State Machine&lt;/b&gt;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="40" width="250" x="1040" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-41" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-38" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-38" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="350" />
+              <mxPoint x="1420" y="320" />
+            </Array>
+            <mxPoint x="1330" y="380" as="sourcePoint" />
+            <mxPoint x="1380" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-43" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-41" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Cash remaining/Counter--" vertex="1">
+          <mxGeometry relative="1" x="-0.0429" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-44" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-45" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-44" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Cash received" vertex="1">
+          <mxGeometry relative="1" x="0.0873" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-48" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-49" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-48" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Espresso/latte" vertex="1">
+          <mxGeometry relative="1" x="0.1533" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-69" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="910" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-71" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-69" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Filter coffee" vertex="1">
+          <mxGeometry relative="1" x="-0.1006" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-42" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="IDLE" vertex="1">
+          <mxGeometry height="80" width="80" x="1125" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-46" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-38" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-42" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="440" />
+              <mxPoint x="1680" y="190" />
+              <mxPoint x="1110" y="60" />
+            </Array>
+            <mxPoint x="1320" y="450" as="sourcePoint" />
+            <mxPoint x="1370" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-47" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-46" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Cash == 0" vertex="1">
+          <mxGeometry relative="1" x="0.082" y="29" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-54" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-55" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-54" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Time == 7.5s" vertex="1">
+          <mxGeometry relative="1" x="-0.1282" y="-1" as="geometry">
+            <mxPoint x="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-50" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Grind espresso/latte&lt;div&gt;(yellow LED)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="80" x="1125" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-51" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-50" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-50" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="390" />
+              <mxPoint x="1070" y="340" />
+            </Array>
+            <mxPoint x="1070" y="390" as="sourcePoint" />
+            <mxPoint x="1120" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-52" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-51" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Time != 7.5s" vertex="1">
+          <mxGeometry relative="1" x="-0.03" y="-10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-58" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=1;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-42">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1230" y="470" />
+              <mxPoint x="1230" y="188" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-63" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-58" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Choice is espresso" vertex="1">
+          <mxGeometry relative="1" x="-0.3705" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-61" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1165" y="610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-62" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-61" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Choice is Latte" vertex="1">
+          <mxGeometry relative="1" x="-0.0449" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-53" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Brew espresso/latte" vertex="1">
+          <mxGeometry height="80" width="80" x="1125" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-56" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-53" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-53" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="528" />
+              <mxPoint x="1070" y="478" />
+            </Array>
+            <mxPoint x="1137" y="496" as="sourcePoint" />
+            <mxPoint x="1137" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-57" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-56" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Time != 7.5s" vertex="1">
+          <mxGeometry relative="1" x="-0.03" y="-10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-67" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-42">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="640" />
+              <mxPoint x="1040" y="188" />
+            </Array>
+            <mxPoint x="1020" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-68" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-67" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Time == 6.2s" vertex="1">
+          <mxGeometry relative="1" x="0.0047" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-64" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Froth milk (green LED)" vertex="1">
+          <mxGeometry height="80" width="80" x="1125" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-65" edge="1" parent="1" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="708" />
+              <mxPoint x="1070" y="658" />
+            </Array>
+            <mxPoint x="1137" y="678" as="sourcePoint" />
+            <mxPoint x="1125" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-66" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-65" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Time != 6.2s" vertex="1">
+          <mxGeometry relative="1" x="-0.03" y="-10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-76" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-42">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="870" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-77" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-76" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Button 2 released for 5 sec or&lt;div&gt;prepaid amount reached&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.0285" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-70" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Dispensing (yellow LED)" vertex="1">
+          <mxGeometry height="80" width="80" x="830" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-72" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-70" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-70" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="160" />
+              <mxPoint x="850" y="70" />
+            </Array>
+            <mxPoint x="730" y="160" as="sourcePoint" />
+            <mxPoint x="780" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-73" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-72" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Button 2 true or&lt;div&gt;prepaid amount not reached&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0302" y="-1" as="geometry">
+            <mxPoint x="-39" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-78" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;LCD State Machine&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="250" x="130" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-81" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="414" y="1230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-82" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-81" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Choice (not UART)" vertex="1">
+          <mxGeometry relative="1" x="-0.0503" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-79" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="IDLE (show all choices)" vertex="1">
+          <mxGeometry height="80" width="80" x="374" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-93" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-90" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="1270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-94" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-93" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Cash" vertex="1">
+          <mxGeometry relative="1" x="0.0294" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-95" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-90" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="1270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-96" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-95" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Card" vertex="1">
+          <mxGeometry relative="1" x="-0.0812" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-90" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Display: Choice DKK (cash/card)" vertex="1">
+          <mxGeometry height="80" width="80" x="374" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-98" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-97" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-110">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="1430" />
+            </Array>
+            <mxPoint x="240" y="1420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-99" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-98" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Valid password/PIN" vertex="1">
+          <mxGeometry relative="1" x="-0.0784" y="-1" as="geometry">
+            <mxPoint x="60" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-97" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Display: Enter card number and PIN" vertex="1">
+          <mxGeometry height="80" width="80" x="200" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-100" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-97" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-97" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="1260" />
+              <mxPoint x="170" y="1210" />
+              <mxPoint x="230" y="1180" />
+            </Array>
+            <mxPoint x="130" y="1260" as="sourcePoint" />
+            <mxPoint x="180" y="1210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-102" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-100" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Invalid password/PIN" vertex="1">
+          <mxGeometry relative="1" x="0.1455" y="-6" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-106" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="560.0000000000002" y="1290" as="sourcePoint" />
+            <mxPoint x="530" y="1390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-107" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-106" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Encoder button pushed&amp;nbsp;&lt;div&gt;and enough money inserted&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1768" y="1" as="geometry">
+            <mxPoint x="-71" y="26" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-103" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Display: Inserted amount and choice DKK" vertex="1">
+          <mxGeometry height="80" width="80" x="550" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-104" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-103" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-103" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="1280" />
+              <mxPoint x="630" y="1180" />
+            </Array>
+            <mxPoint x="660" y="1280" as="sourcePoint" />
+            <mxPoint x="710" y="1230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-105" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-104" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Encoder button not pressed&amp;nbsp;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;or&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Encoder button pressed but&lt;/div&gt;&lt;div&gt;insuficient funds&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0712" y="2" as="geometry">
+            <mxPoint x="43" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-115" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-110" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-114">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="530" y="1490" />
+              <mxPoint x="750" y="1490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-116" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-115" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Product finished" vertex="1">
+          <mxGeometry relative="1" x="-0.0813" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-110" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Display: Choice is being produced..." vertex="1">
+          <mxGeometry height="80" width="80" x="490" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-112" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-110" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-110" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="1460" />
+              <mxPoint x="580" y="1410" />
+            </Array>
+            <mxPoint x="580" y="1460" as="sourcePoint" />
+            <mxPoint x="630" y="1410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-113" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-112" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Product not finished" vertex="1">
+          <mxGeometry relative="1" x="0.4183" as="geometry">
+            <mxPoint x="33" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-117" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-114" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-79">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="1430" />
+              <mxPoint x="820" y="1110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-118" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-117" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Time&amp;nbsp; == 5s" vertex="1">
+          <mxGeometry relative="1" x="0.472" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-114" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Display: Choice produced" vertex="1">
+          <mxGeometry height="80" width="80" x="710" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-119" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-114" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-114" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="1380" />
+              <mxPoint x="690" y="1350" />
+            </Array>
+            <mxPoint x="650" y="1380" as="sourcePoint" />
+            <mxPoint x="700" y="1330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-120" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-119" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Time != 5s" vertex="1">
+          <mxGeometry relative="1" x="0.3012" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-126" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;Encoder State Machine&lt;/b&gt;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="40" width="250" x="970" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-127" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Keypad State Machine&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="250" x="150" y="1590" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-128" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;UART State Machine&lt;/b&gt;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="40" width="250" x="930" y="1590" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-149" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-129" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1200" y="1260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-150" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-149" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Button LOW" vertex="1">
+          <mxGeometry relative="1" x="0.1804" y="-3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-159" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-129" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-160">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="1120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-161" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-159" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="encoder activated" vertex="1">
+          <mxGeometry relative="1" x="-0.02" y="-2" as="geometry">
+            <mxPoint x="-1" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-129" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="IDLE" vertex="1">
+          <mxGeometry height="80" width="80" x="1160" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-132" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-130" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="319" y="1900" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-135" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-132" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Button pushed (1, 2 or 3)" vertex="1">
+          <mxGeometry relative="1" x="-0.086" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-130" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="IDLE&lt;div&gt;(Waiting for 1,2,3 button press)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="80" x="279" y="1700" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-137" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-136" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-130">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="1940" />
+              <mxPoint x="230" y="1740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-140" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-137" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Choice: Cash (1)" vertex="1">
+          <mxGeometry relative="1" x="0.192" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-141" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-136" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="490" y="1940" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-142" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-141" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Choice: Card (2)" vertex="1">
+          <mxGeometry relative="1" x="-0.0157" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-136" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Choose cash (1) or card (2)" vertex="1">
+          <mxGeometry height="80" width="80" x="280" y="1900" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-146" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-143" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-130">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="530" y="1740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-148" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-146" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Card number and PIN accepted" vertex="1">
+          <mxGeometry relative="1" x="0.443" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-143" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Waiting for card number and PIN" vertex="1">
+          <mxGeometry height="80" width="80" x="490" y="1900" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-144" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-143" style="curved=1;endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-143" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="1990" />
+              <mxPoint x="540" y="2010" />
+            </Array>
+            <mxPoint x="610" y="1990" as="sourcePoint" />
+            <mxPoint x="660" y="1940" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-145" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-144" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Card number and PIN not accepted" vertex="1">
+          <mxGeometry relative="1" x="0.2441" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-152" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-151" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-129">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1290" y="1300" />
+              <mxPoint x="1290" y="1120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-164" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-152" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Button HIGH" vertex="1">
+          <mxGeometry relative="1" x="-0.1197" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-151" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Send final amount" vertex="1">
+          <mxGeometry height="80" width="80" x="1160" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-162" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-160" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-129">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="990" y="1060" />
+              <mxPoint x="1200" y="1060" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-163" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-162" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Button LOW" vertex="1">
+          <mxGeometry relative="1" x="0.0351" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-160" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Send to LCD" vertex="1">
+          <mxGeometry height="80" width="80" x="950" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-166" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-165" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1130" y="1860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-167" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-166" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Product produced" vertex="1">
+          <mxGeometry relative="1" x="-0.0267" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-170" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-165" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1300" y="1714" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-171" connectable="0" parent="Q9ZoplDKa_EXOp9t4pDC-170" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Change price" vertex="1">
+          <mxGeometry relative="1" x="0.0185" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-165" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="IDLE" vertex="1">
+          <mxGeometry height="80" width="80" x="1090" y="1674" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-168" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Receive UART" vertex="1">
+          <mxGeometry height="80" width="80" x="1090" y="1860" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-172" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" value="Transmit UART" vertex="1">
+          <mxGeometry height="80" width="80" x="1300" y="1674" as="geometry" />
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-173" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-168" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-165" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="1880" />
+              <mxPoint x="1040" y="1790" />
+            </Array>
+            <mxPoint x="1010" y="1880" as="sourcePoint" />
+            <mxPoint x="1060" y="1830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q9ZoplDKa_EXOp9t4pDC-174" edge="1" parent="1" source="Q9ZoplDKa_EXOp9t4pDC-172" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Q9ZoplDKa_EXOp9t4pDC-165" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="1650" />
+              <mxPoint x="1220" y="1630" />
+            </Array>
+            <mxPoint x="1280" y="1650" as="sourcePoint" />
+            <mxPoint x="1330" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
