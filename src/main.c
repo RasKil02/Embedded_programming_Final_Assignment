@@ -48,10 +48,11 @@ int main(void)
     xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( status_led_task, "Status_led", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( red_led_task,    "Red_led",    USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( yellow_led_task, "Yellow_led", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( green_led_task,  "Green_led",  USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( main_task, "main task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( LCD_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+
     vTaskStartScheduler();
 	return 0;
 }

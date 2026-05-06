@@ -1,24 +1,32 @@
 /*****************************************************************************
 * University of Southern Denmark
-* Embedded Programming (EMP)
+* Embedded C Programming (ECP)
 *
-* MODULENAME.: adc.h
+* MODULENAME.: LED_task.h
 *
-* PROJECT....: EMP
+* PROJECT....: EMP final assignment
 *
-* DESCRIPTION: Analog input from EMP-board pot-meter.
+* DESCRIPTION: Used for all LED related functions
 *
 * Change Log:
 ******************************************************************************
 * Date    Id    Change
 * YYMMDD
 * --------------------
-* 150412  MoH   Module created.
+* 040526  KOES    Module created.
 *
 *****************************************************************************/
 
-#ifndef _ADC_H
-  #define _ADC_H
+/*
+ * LED_task.h
+ *
+ *  Created on: 4. maj 2026
+ *      Author: Karl
+ */
+
+#ifndef LED_TASK_H_
+#define LED_TASK_H_
+
 
 /***************************** Include files *******************************/
 
@@ -27,22 +35,19 @@
 /*****************************   Constants   *******************************/
 
 /*****************************   Functions   *******************************/
+void blink_green_led(void);
 
-INT16U get_adc();
-/*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Test function
-******************************************************************************/
+void turn_on_yellow_led(void);
+void turn_on_red_led(void);
+void turn_on_green_led(void);
 
-void init_adc();
-/*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Test function
-******************************************************************************/
+void turn_off_led(void);
+
+void LED_init(void);
+
+void LED_task(void *pvParameters);
 
 
 /****************************** End Of Module *******************************/
-#endif
 
+#endif /* LED_TASK_H_ */
