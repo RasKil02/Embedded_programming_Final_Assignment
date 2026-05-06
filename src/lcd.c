@@ -31,15 +31,20 @@
 
 #define QUEUE_LEN   128
 
-enum LCD_states
+extern QueueHandle_t lcd_queue;
+
+typedef enum
 {
   LCD_POWER_UP,
-  UI_IDLE,
-  UI_SELECT_COFFEE,
-  UI_COFFEE_SELECTED,
-  UI_PRODUCING,
-  UI_DONE
-};
+  LCD_INIT,
+  IDLE,
+  LCD_DISPLAY_CASH_OR_CARD,
+  LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
+  RETURN_CASH,
+  LCD_DISPLAY_CHOICE,
+  LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
+  LCD_DISPLAY_CHOICE_PRODUCED,
+} LCD_states;
 
 /*****************************   Constants   *******************************/
 const INT8U LCD_init_sequense[]= 
@@ -52,7 +57,7 @@ const INT8U LCD_init_sequense[]=
   0x0C,		// Display ON, Cursor OFF, Blink OFF
   0x06,		// Cursor Increment
   0x01,		// Clear Display
-  0x02,     	// Home
+  0x02,   // Home
   0xFF		// stop
 }; 
 
@@ -240,114 +245,123 @@ void out_LCD( INT8U Ch )
   out_LCD_low( Ch );
 }
 
-void vLcdTask(void *pvParameters)
-{
-  UI_Event event;
+void lcd_task(void *pvParameters)
+/*****************************************************************************
+*   Input    : 
+*   Output   : 
+*   Function : 
+******************************************************************************/
+{ 
+  LCD_states event;
 
   while(1)
   {
-    if(xQueueReceive(lcdQueue, &event, portMAX_DELAY))
+    if(xQueueReceive(lcd_queue, &event, portMAX_DELAY))
     {
-      switch(event)
+      switch(event.cmd)
       {
-        case UI_IDLE:
+        case LCD_POWER_UP:
+        {
+          LCD_init = 0;
+          STATE = LCD_INIT;
+          wait( 100 );
+          break;
+        }
+
+        case LCD_INIT:
+        {
+          if( LCD_init_sequense[LCD_init] != 0xFF )
+          {
+            wr_ctrl_LCD( LCD_init_sequense[LCD_init++] );
+          }
+          else
+          {
+            STATE = IDLE;
+          }
+
+          wait( 100 );
+          
+          break;
+        }
+
+        case IDLE :
+        {
           lcd_clear();
           lcd_home();
-          lcd_print("Idle");
+          wr_str_LCD("Choose coffee:");
+          move_LCD(0,1);
+          wr_str_LCD("1:E");
+          move_LCD(5,1);
+          wr_str_LCD("2:L");
+          move_LCD(10,1);
+          wr_str_LCD("3:F");
           break;
 
-        case UI_SELECT_COFFEE:
+        }
+          
+        case LCD_DISPLAY_CASH_OR_CARD :
+        {
           lcd_clear();
           lcd_home();
-          lcd_print("Select coffee");
+          wr_str_LCD("Pay with:");
+          move_LCD(0,1);
+          wr_str_LCD("1:Cash");
+          move_LCD(7,1);
+          wr_str_LCD("2:Card");
+          break;
+        }
 
-          lcd_set_cursor(0,1);
-          lcd_print("1:Esp 2:Latte");
+        case LCD_DISPLAY_CHOICE :
+        {
+          lcd_clear();
+          lcd_home();
+          wr_str_LCD("You chose:");
+          move_LCD(0,1);
+          int choice = event.value; // 1, 2 or 3
+          if (choice == '1')
+          {
+              wr_str_LCD("E15DKK");
+
+          }
+          else if (choice == '2')
+          {
+              wr_str_LCD("L27DKK");
+          }
+          else if (choice == '3')
+          {
+              wr_str_LCD("F3DKKCL");
+          }
+          break;
+        }
+
+        case LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN :
+          lcd_clear();
+          lcd_home();
+          wr_str_LCD("Enter card number:");
           break;
 
-        case UI_COFFEE_SELECTED:
+        case LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED :
           lcd_clear();
-          lcd_print("Coffee selected");
-
-          lcd_set_cursor(0,1);
-          lcd_print("Card or Cash");
+          lcd_home();
+          wr_str_LCD("Dispensing...");
+          break;
+        
+        case LCD_DISPLAY_CHOICE_PRODUCED :
+          lcd_clear();
+          lcd_home(); 
+          wr_str_LCD("Remove");
+          move_LCD(6,0);
+          wr_str_LCD("coffee");
           break;
 
-        case UI_PRODUCING:
+        case RETURN_CASH :
           lcd_clear();
-          lcd_print("Making coffee...");
-          break;
-
-        case UI_DONE:
-          lcd_clear();
-          lcd_print("Take coffee!");
+          lcd_home();
+          wr_str_LCD("Returning");
+          move_LCD(0,1);
+          wr_str_LCD("change");
           break;
       }
     }
   }
 }
-/*
-void lcd_task(INT8U my_id, INT8U my_state, INT8U event, INT8U data)
-/*****************************************************************************
-*   Input    :
-*   Output   :
-*   Function :
-******************************************************************************/ /*
-{
-  INT8U ch;
-
-  switch( my_state )
-  {
-    case LCD_POWER_UP:
-      LCD_init = 0;
-      set_state( LCD_INIT );
-      wait( 100 );
-      break;
-
-    case LCD_INIT:
-      if( LCD_init_sequense[LCD_init] != 0xFF )
-        wr_ctrl_LCD( LCD_init_sequense[LCD_init++] );
-      else
-	  {
-		set_state( idle/ingenting );
-        //open_queue( Q_LCD );
-	  }
-	  wait( 100 );
-      break;
-
-    case IDLE show coffe chooses:
-      if( get_queue( Q_LCD, &idle/ingenting, WAIT_FOREVER ))
-      {
-        switch( ch )
-        {
-            (linje 1)wr_str_LCD(Select a coffe)
-
-            move to linje 2
-	        wr_str_LCD(coffe1)
-	        move_cursor et par pladser
-	        wr_str_LCD(Coffe2)
-	        move_cursor et par pladser
-	        wr_str_LCD(coffe3)
-	        read queue
-		}
-	  }
-	  case coffe selected
-	   skal vise coffe og pris for kaffen
-	   linje 2 skal vise card eller cash
-
-	   case card
-	   osv
-	   case cash
-	   osv
-	   case producing coffe
-	   osv
-	   case coffe done
-	   - show take coffe
-
-/*
-
-/****************************** End Of Module *******************************/
-
-
-
-

@@ -39,6 +39,11 @@
 
 
 /*****************************    Defines    *******************************/
+extern QueueHandle_t change_q; 
+extern QueueHandle_t purchased_products_q;
+extern QueueHandle_t time_q;
+
+
 typedef enum {
     IDLE,
     RETURN_CASH,
@@ -56,8 +61,6 @@ typedef enum {
 } product_t;
 
 // Placeholders for succesful build:
-QueueHandle_t change_q;
-QueueHandle_t purchased_products_q;
 
 /*****************************   Constants   *******************************/
 
@@ -261,6 +264,7 @@ void LED_task(void *pvParameters)
                 {
                     turn_off_led();
                     STATE = IDLE;
+                    xQueueSend(time_q, &time, 0); // Send time to controller task for logging
                     time = 0;
                     time_inactive = 0;
                 }
@@ -269,11 +273,12 @@ void LED_task(void *pvParameters)
                 {
                     turn_off_led();
                     STATE = IDLE;
+                    xQueueSend(time_q, &time, 0); // Send time to controller task for logging
                     time = 0;
                     time_inactive = 0;
                 }
 
-                vTaskDelay(100);
+                vTaskDelay(90);
                 time += 100;
                 prepaid_amount -= 0.1; // kr.
 

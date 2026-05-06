@@ -1,18 +1,25 @@
 /**
  * main.c
  */
-#include <stdint.h>
+
+ /***************************    Includes     **********************************/
+#include "FreeRTOS.h"
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
-#include "systick_frt.h"
-#include "FreeRTOS.h"
 #include "task.h"
-#include "status_led.h"
-#include "LED_task.h"
+#include "systick_frt.h"
 #include "adc.h"
+
+#include <stdint.h>
+
+#include "LED_task.h"
 #include "Keypad.h"
 #include "controller.h"
+#include "lcd.h"
+#include "encoder.c"
+#include "uart.h"
 
+/***************************    Defines     **********************************/
 #define USERTASK_STACK_SIZE configMINIMAL_STACK_SIZE
 #define IDLE_PRIO 0
 #define LOW_PRIO  1
@@ -21,7 +28,13 @@
 
 QueueHandle_t key_queue;
 QueueHandle_t uart_queue_handler;
+QueueHandle_t encoder_queue;
+QueueHandle_t lcd_queue;
+QueueHandle_t change_q;
+QueueHandle_t purchased_products_q;
+QueueHandle_t time_q;
 
+/***************************    Functions     **********************************/
 static void setupHardware(void)
 /*****************************************************************************
 *   Input    :  -
@@ -43,13 +56,18 @@ int main(void)
 
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) ); // Is this correct?
     uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
+    encoder_queue = xQueueCreate( 10, sizeof( INT8U ) );
+    lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
+    change_q = xQueueCreate(10, sizeof(int));
+    purchased_products_q = xQueueCreate(10, sizeof(product_t));
+    time_q = xQueueCreate(10, sizeof(int));
 
     xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( LCD_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     vTaskStartScheduler();
