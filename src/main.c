@@ -1,5 +1,3 @@
-
-
 /**
  * main.c
  */
@@ -10,11 +8,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "status_led.h"
-#include "leds.h"
+#include "LED_task.h"
 #include "adc.h"
 #include "Keypad.h"
-#include "uart.h"
-#include "encoder.h"
+#include "controller.h"
 
 #define USERTASK_STACK_SIZE configMINIMAL_STACK_SIZE
 #define IDLE_PRIO 0
@@ -24,7 +21,7 @@
 
 QueueHandle_t key_queue;
 QueueHandle_t uart_queue_handler;
-QueueHandle_t encoder_queue;
+
 static void setupHardware(void)
 /*****************************************************************************
 *   Input    :  -
@@ -45,17 +42,16 @@ int main(void)
     setupHardware();
 
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) ); // Is this correct?
-    uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) ); 
-    encoder_queue = xQueueCreate( 10, sizeof( INT8U ) );
+    uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
 
     xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( main_task, "main task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( LCD_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     vTaskStartScheduler();
-	return 0;
+    return 0;
 }
