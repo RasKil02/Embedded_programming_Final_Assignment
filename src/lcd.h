@@ -39,8 +39,17 @@
 void wr_str_LCD( INT8U* );
 void move_LCD( INT8U, INT8U );
 INT8U wr_ch_LCD( INT8U Ch );
+void lcd_task(void *pvParameters);
+void lcd_clear();
+void lcd_home();
+void out_LCD( INT8U Ch );
+void out_LCD_high( INT8U Ch );
+void out_LCD_low( INT8U Ch );
+void wr_ctrl_LCD( INT8U Ch );
+void wr_ctrl_LCD_low( INT8U Ch );
+void wr_ctrl_LCD_high( INT8U Ch );
+void lcd_init();
 
-void lcd_task(INT8U, INT8U, INT8U, INT8U);
 /*****************************************************************************
 *   Input    : -
 *   Output   : -

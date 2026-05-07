@@ -35,45 +35,46 @@
 #include "emp_type.h"
 
 // Own includes
-
 #include "controller.h"
 #include "LED.task.h"
 #include "Keypad.h"
 #include "lcd.h"
 #include "encoder.h"
 #include "uart.h"
-#include <string.h>
+
+// data types
+#include <vector>
+
+using namespace std;
 
 /*****************************    Defines    *******************************/
 typedef enum {
-    IDLE,
-    PAYMENT,
-    CHANGE_PRODUCT_PRICE,
-    RECEIVING_CASH,
-    RETURN_CASH,
-    PRODUCE_CHOICE,
-    LOG_PRODUCT_CHOICE,
-    WAIT_FOR_CARD,
-} state_t;
+    C_IDLE,
+    C_PAYMENT,
+    C_CHANGE_PRODUCT_PRICE,
+    C_RECEIVING_CASH,
+    C_RETURN_CASH,
+    C_PRODUCE_CHOICE,
+    C_LOG_PRODUCT_CHOICE,
+    C_WAIT_FOR_CARD,
+} controller_state_t;
+
+typedef struct {
+    string coffee_type;
+    int price;
+    int amount;
+    int time_of_day;
+    int payment_type;
+    int card_number;
+} uart_product_t;
 
 typedef enum {
-    LCD_DISPLAY_CHOICE,
-    RETURN_CASH_LCD
-} lcd_cmd_t;
+    NO_PRODUCT = 0,
+    ESPRESSO,           // 1
+    LATTE,              // 2
+    FILTER              // 3, C has automatically assigned 1,2 and 3.
+} product_t;
 
-typedef struct {
-    lcd_cmd_t cmd;
-    int value;
-} lcd_msg_t;
-
-typedef struct {
-    string coffe_type,
-    int price,
-    int amount,
-    int time_of_day,
-    int payment_type,
-    int card_number
-} uart_product_t;
 
 /*****************************   Constants   *******************************/
 #define INITIAL_BREWING_RATE  0.6       // price pr. cl
@@ -98,7 +99,7 @@ void controller_task(void *pvParameters)
 *   Function :  -
 *****************************************************************************/
 {
-    state_t STATE = IDLE;
+    controller_state_t STATE = C_IDLE;
     lcd_msg_t msg;
     uart_product_t uart_product;
     INT8U input;
@@ -115,29 +116,29 @@ void controller_task(void *pvParameters)
     {
         switch(STATE)
         {
-            case IDLE :
+            case C_IDLE :
             {
 
                 if (xQueueReceive(key_queue, &input, 0))
                 {
-                    STATE = PAYMENT;
+                    STATE = C_PAYMENT;
                 }
 
                 if (xQueueReceive(uart_queue_handler, &data, 0))
                 {
-                    STATE = CHANGE_PRODUCT_PRICE;
+                    STATE = C_CHANGE_PRODUCT_PRICE;
                 }
 
                 break;
             }
 
-            case CHANGE_PRODUCT_PRICE :
+            case C_CHANGE_PRODUCT_PRICE :
             {
                 // Dont know what to put here
                 break;
             }
 
-            case PAYMENT :
+            case C_PAYMENT :
             {
                 msg.cmd = LCD_DISPLAY_CHOICE;
                 msg.value = input;
@@ -148,18 +149,18 @@ void controller_task(void *pvParameters)
                 {   
                     if (input == '1')
                     {
-                        STATE = RECEIVING_CASH;
+                        STATE = C_RECEIVING_CASH;
                     }
                     
                     if (input == '2')
                     {
-                        STATE = WAIT_FOR_CARD;
+                        STATE = C_WAIT_FOR_CARD;
                     }
                 }
                 break;
             }
             
-            case RECEIVING_CASH :
+            case C_RECEIVING_CASH :
             {
                 if (xQueueReceive(key_queue, &input, 0))
                 {   
@@ -184,33 +185,33 @@ void controller_task(void *pvParameters)
                     if (money >= price)
                     {   
                         change_price = money - price;
-                        STATE = RETURN_CASH;
+                        STATE = C_RETURN_CASH;
                     }
                 }
                 break;
             }
 
-            case RETURN_CASH :
+            case C_RETURN_CASH :
             {
-                msg.cmd = RETURN_CASH_LCD;
+                msg.cmd = LCD_RETURN_CASH;
                 msg.value = change_price;
 
                 xQueueSend(lcd_queue, &msg, 0); 
                 xQueueSend(change_q, &change_price, 0); // Send change to LED task
 
-                STATE = PRODUCE_CHOICE;
+                STATE = C_PRODUCE_CHOICE;
 
                 break;
             }
 
-            case PRODUCE_CHOICE :
+            case C_PRODUCE_CHOICE :
             {
                 xQueueSend(purchased_products_q, &input, 0); // Send product choice to LED task
-                STATE = LOG_PRODUCT_CHOICE;
+                STATE = C_LOG_PRODUCT_CHOICE;
                 break;
             }
 
-            case WAIT_FOR_CARD :
+            case C_WAIT_FOR_CARD :
             {
                 xQueueReceive(key_queue, &card_number, 0);  // Receive card number from UART task
                 xQueueReceive(key_queue, &PIN, 0);        // Receive PIN from UART task
@@ -218,12 +219,12 @@ void controller_task(void *pvParameters)
                 if (card_number % 2 == 1 || PIN % 2 == 0)
                 {
                     // Card rejected
-                    STATE = IDLE;
+                    STATE = C_IDLE;
                 }
                 if (card_number % 2 == 0 || PIN % 2 == 1)
                 {
                     // Card rejected
-                    STATE = IDLE;
+                    STATE = C_IDLE;
                 }
                 else
                 {
@@ -232,13 +233,13 @@ void controller_task(void *pvParameters)
                     msg.value = input;
 
                     xQueueSend(lcd_queue, &msg, 0);   // Send choice of coffee to LCD task
-                    STATE = PRODUCE_CHOICE;
+                    STATE = C_PRODUCE_CHOICE;
                 }
 
                 break;
             }
 
-            case LOG_PRODUCT_CHOICE :
+            case C_LOG_PRODUCT_CHOICE :
             {
                 if (uart_product.price == espresso)
                 {
@@ -288,7 +289,7 @@ void controller_task(void *pvParameters)
                 }
 
                 xQueueSend(uart_queue_handler, &uart_product, 0); // Send product choice to UART task
-                STATE = IDLE;
+                STATE = C_IDLE;
                 break;
             }
 

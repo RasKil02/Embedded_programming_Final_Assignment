@@ -118,7 +118,6 @@ void turn_on_red_led(void)
     GPIO_PORTF_DATA_R = 0x02;
 }
 
-
 void turn_on_yellow_led(void)
 /*****************************************************************************
 *   Input    :  -

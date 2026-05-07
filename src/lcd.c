@@ -18,33 +18,39 @@
 *****************************************************************************/
 
 /***************************** Include files *******************************/
+// For freeRTOS
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
-#include "lcd.h"
 #include "glob_def.h"
 #include "tmodel.h"
-//#include "sem.h"
+
+// Own includes
+#include "lcd.h"
+
+using namespace std;
 
 
 /*****************************    Defines    *******************************/
-
 #define QUEUE_LEN   128
 
 extern QueueHandle_t lcd_queue;
 
 typedef enum
 {
-  LCD_POWER_UP,
-  LCD_INIT,
-  IDLE,
+  LCD_IDLE,
   LCD_DISPLAY_CASH_OR_CARD,
   LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
-  RETURN_CASH,
+  LCD_RETURN_CASH,
   LCD_DISPLAY_CHOICE,
   LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
   LCD_DISPLAY_CHOICE_PRODUCED,
-} LCD_states;
+} lcd_states;
+
+typedef struct {
+    lcd_states cmd;
+    int value;
+} lcd_msg_t;
 
 /*****************************   Constants   *******************************/
 const INT8U LCD_init_sequense[]= 
@@ -67,7 +73,6 @@ const INT8U LCD_init_sequense[]=
 //INT8U LCD_buf_tail = 0;
 //INT8U LCD_buf_len  = 0;
 
-enum LCD_states LCD_state = LCD_POWER_UP;
 INT8U LCD_init;
 
 
@@ -106,7 +111,6 @@ void move_LCD( INT8U x, INT8U y )
   wr_ch_LCD( ESC );
   wr_ch_LCD( Pos );
 }
-//----------------------------
 
 void wr_ctrl_LCD_low( INT8U Ch )
 /*****************************************************************************
@@ -209,7 +213,6 @@ void clr_LCD()
   wr_ctrl_LCD( 0x01 );
 }
 
-
 void home_LCD()
 /*****************************************************************************
 *   Input    : -
@@ -230,7 +233,6 @@ void Set_cursor( INT8U Ch )
   wr_ctrl_LCD( Ch );
 }
 
-
 void out_LCD( INT8U Ch )
 /*****************************************************************************
 *   Input    : -
@@ -245,6 +247,21 @@ void out_LCD( INT8U Ch )
   out_LCD_low( Ch );
 }
 
+void lcd_init()
+/*****************************************************************************
+*   Input    : -  
+*   Output   : -
+*   Function : Initialize LCD.
+******************************************************************************/
+{
+  if( LCD_init_sequense[LCD_init] != 0xFF )
+    {
+      wr_ctrl_LCD( LCD_init_sequense[LCD_init++] );
+    }
+  
+    wait( 100 );
+}
+
 void lcd_task(void *pvParameters)
 /*****************************************************************************
 *   Input    : 
@@ -252,7 +269,8 @@ void lcd_task(void *pvParameters)
 *   Function : 
 ******************************************************************************/
 { 
-  LCD_states event;
+  lcd_msg_t event;
+  lcd_init();
 
   while(1)
   {
@@ -260,31 +278,7 @@ void lcd_task(void *pvParameters)
     {
       switch(event.cmd)
       {
-        case LCD_POWER_UP:
-        {
-          LCD_init = 0;
-          STATE = LCD_INIT;
-          wait( 100 );
-          break;
-        }
-
-        case LCD_INIT:
-        {
-          if( LCD_init_sequense[LCD_init] != 0xFF )
-          {
-            wr_ctrl_LCD( LCD_init_sequense[LCD_init++] );
-          }
-          else
-          {
-            STATE = IDLE;
-          }
-
-          wait( 100 );
-          
-          break;
-        }
-
-        case IDLE :
+        case LCD_IDLE :
         {
           lcd_clear();
           lcd_home();
@@ -296,7 +290,6 @@ void lcd_task(void *pvParameters)
           move_LCD(10,1);
           wr_str_LCD("3:F");
           break;
-
         }
           
         case LCD_DISPLAY_CASH_OR_CARD :
@@ -362,6 +355,7 @@ void lcd_task(void *pvParameters)
           wr_str_LCD("change");
           break;
       }
+      vTaskDelay(10 / portTICK_RATE_MS);
     }
   }
 }
