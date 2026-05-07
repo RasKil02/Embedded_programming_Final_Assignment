@@ -68,14 +68,6 @@ typedef struct {
     int card_number;
 } uart_product_t;
 
-typedef enum {
-    NO_PRODUCT = 0,
-    ESPRESSO,           // 1
-    LATTE,              // 2
-    FILTER              // 3, C has automatically assigned 1,2 and 3.
-} product_t;
-
-
 /*****************************   Constants   *******************************/
 #define INITIAL_BREWING_RATE  0.6       // price pr. cl
 #define INCREASED_BREWING_RATE 1.45     // price pr. cl after 3 minutes

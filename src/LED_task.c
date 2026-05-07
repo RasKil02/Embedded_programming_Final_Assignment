@@ -26,6 +26,7 @@
  */
 
 /***************************** Include files *******************************/
+// for freeRTOS
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "FreeRTOS.h"
@@ -35,10 +36,16 @@
 #include "emp_type.h"
 //#include "glob_def.h"
 //#include "binary.h"
-#include "status_led.h"
+
+// Own includes
+#include "LED_task.h"
+
+using namespace std;
 
 
 /*****************************    Defines    *******************************/
+#define QUEUE_LEN 128
+
 extern QueueHandle_t change_q; 
 extern QueueHandle_t purchased_products_q;
 extern QueueHandle_t time_q;
@@ -60,7 +67,6 @@ typedef enum {
     FILTER              // 3, C has automatically assigned 1,2 and 3.
 } product_t;
 
-// Placeholders for succesful build:
 
 /*****************************   Constants   *******************************/
 

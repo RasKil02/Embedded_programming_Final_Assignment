@@ -18,6 +18,7 @@
 *****************************************************************************/
 
 /***************************** Include files *******************************/
+// for freeRTOS
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
@@ -25,12 +26,24 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 
+// Own includes
+#include "encoder.h"
+
+using namespace std;
+
 /*****************************    Defines    *******************************/
+#define QUEUE_LEN 128
+
+extern QueueHandle_t encoder_queue;
+
 #define DIGI_A   0x20   // PA5
 #define DIGI_B   0x40   // PA6
 #define DIGI_P2  0x80   // PA7
+
+#define IDLE               0
+#define SEND_TO_LCD        1
+#define SEND_FINAL_AMOUNT  2
 /*****************************   Constants   *******************************/
-extern QueueHandle_t encoder_queue;
 
 /*****************************   Variables   *******************************/
 
@@ -100,9 +113,19 @@ INT8U Encoder_readButton( void )
     return( xQueueSend( encoder_queue, &value_button, portMAX_DELAY ) );    // Send value to queue
 }
 
-#define IDLE               0
-#define SEND_TO_LCD        1
-#define SEND_FINAL_AMOUNT  2
+void Encoder_init( void )
+/*****************************************************************************
+*   Input    :
+*   Output   :
+*   Function :
+******************************************************************************/
+{
+    SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOA;
+
+    GPIO_PORTA_DIR_R &= ~( DIGI_A | DIGI_B | DIGI_P2 );
+    GPIO_PORTA_DEN_R |=  ( DIGI_A | DIGI_B | DIGI_P2 );
+    GPIO_PORTA_PUR_R |=  ( DIGI_A | DIGI_B | DIGI_P2 );
+}
 
 extern void encoder_task( void *pvParameters )
 /*****************************************************************************
@@ -164,18 +187,4 @@ extern void encoder_task( void *pvParameters )
 
         vTaskDelay( pdMS_TO_TICKS( 10 ) );
     }
-}
-
-void Encoder_init( void )
-/*****************************************************************************
-*   Input    :
-*   Output   :
-*   Function :
-******************************************************************************/
-{
-    SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOA;
-
-    GPIO_PORTA_DIR_R &= ~( DIGI_A | DIGI_B | DIGI_P2 );
-    GPIO_PORTA_DEN_R |=  ( DIGI_A | DIGI_B | DIGI_P2 );
-    GPIO_PORTA_PUR_R |=  ( DIGI_A | DIGI_B | DIGI_P2 );
 }

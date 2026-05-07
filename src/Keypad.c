@@ -18,6 +18,7 @@
 *****************************************************************************/
 
 /***************************** Include files *******************************/
+// for freeRTOS
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
@@ -25,7 +26,21 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 
+// Own includes
+#include "Keypad.h"
+
+using namespace std;
+
+/*****************************    Defines    *******************************/
+#define QUEUE_LEN 128
+
 extern QueueHandle_t key_queue;
+
+/*****************************   Constants   *******************************/
+
+/*****************************   Variables   *******************************/
+
+/*****************************   Functions   *******************************/
 
 INT8U row( INT8U y )
 {
