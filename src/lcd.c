@@ -260,6 +260,28 @@ void init_lcd_hardware(void)
   GPIO_PORTD_DEN_R |= 0x0C;
 }
 
+void slide_text(char *str)
+{
+    int offset = 0;
+    while (1)
+    {
+        clr_LCD();
+        home_LCD();
+
+        move_LCD(offset, 0);   // flyt startposition
+        lcd_print(str);        // print hele string
+
+        vTaskDelay(300 / portTICK_RATE_MS);
+
+        offset++;
+
+        if (offset > 15)   // LCD bredde (typisk 16)
+        {
+            offset = 0;
+        }
+    }
+}
+
 void lcd_task(void *pvParameters)
 /*****************************************************************************
 *   Input    :
