@@ -246,6 +246,20 @@ void lcd_print(char *str)
     }
 }
 
+void init_lcd_hardware(void)
+{
+  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOC;
+  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOD;
+
+  volatile int delay = SYSCTL_RCGC2_R; // allow clock to start
+
+  GPIO_PORTC_DIR_R |= 0xF0; // PC4–PC7 output
+  GPIO_PORTC_DEN_R |= 0xF0;
+
+  GPIO_PORTD_DIR_R |= 0x0C; // PD2, PD3 output (adjust if needed)
+  GPIO_PORTD_DEN_R |= 0x0C;
+}
+
 void lcd_task(void *pvParameters)
 /*****************************************************************************
 *   Input    :
@@ -266,12 +280,55 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Choose coffee:");
-            lcd_print("1:E");
+
+            out_LCD('C');
+            move_LCD(1,0);
+            out_LCD('h');
+            move_LCD(2,0);
+            out_LCD('o');
+            move_LCD(3,0);
+            out_LCD('o');
+            move_LCD(4,0);
+            out_LCD('s');
+            move_LCD(5,0);
+            out_LCD('e');
+
+            move_LCD(7,0);
+            out_LCD('C');
+            move_LCD(8,0);
+            out_LCD('o');
+            move_LCD(9,0);
+            out_LCD('f');
+            move_LCD(10,0);
+            out_LCD('f');
+            move_LCD(11,0);
+            out_LCD('e');
+            move_LCD(12,0);
+            out_LCD('e');
+            move_LCD(13,0);
+            out_LCD(':');
+
+            move_LCD(0,1);
+            out_LCD('E');
+            move_LCD(1,1);
+            out_LCD(':');
+            move_LCD(2,1);
+            out_LCD('1');
+
+            move_LCD(4,1);
+            out_LCD('L');
             move_LCD(5,1);
-            lcd_print("2:L");
+            out_LCD(':');
+            move_LCD(6,1);
+            out_LCD('2');
+
+            move_LCD(8,1);
+            out_LCD('F');
+            move_LCD(9,1);
+            out_LCD(':');
             move_LCD(10,1);
-            lcd_print("3:F");
+            out_LCD('3');
+
             break;
         }
 
@@ -279,11 +336,6 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Pay with:");
-            move_LCD(0,1);
-            lcd_print("1:Cash");
-            move_LCD(7,1);
-            lcd_print("2:Card");
             break;
         }
 
@@ -291,6 +343,9 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
+            out_LCD('W');
+
+            /*
             lcd_print("You chose:");
             move_LCD(0,1);
             int choice = event.value; // 1, 2 or 3
@@ -307,6 +362,7 @@ void lcd_task(void *pvParameters)
             {
                 lcd_print("F3DKKCL");
             }
+            */
             break;
         }
 
