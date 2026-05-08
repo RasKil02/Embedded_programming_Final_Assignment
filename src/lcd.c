@@ -33,6 +33,8 @@
 
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN   128
+#define FALSE       0
+#define TRUE        1
 
 extern QueueHandle_t lcd_queue;
 
@@ -78,17 +80,54 @@ const INT8U LCD_init_sequense[]=
 
 INT8U LCD_init;
 
+<<<<<<< HEAD
 
 
 void move_LCD(INT8U x, INT8U y)
+=======
+/*****************************   Functions   *******************************/
+<<<<<<< HEAD
+=======
+INT8U wr_ch_LCD( INT8U Ch )
+>>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 /*****************************************************************************
 *   Input    : -
 *   Output   : -
 *   Function : -
 ******************************************************************************/
 {
+<<<<<<< HEAD
     INT8U pos = (y == 0) ? (0x80 + x) : (0x80 + 0x40 + x);
     wr_ctrl_LCD(pos);
+=======
+  return( xQueueSend( Q_LCD, &Ch, 0 ));
+}
+
+void wr_str_LCD( INT8U *pStr )
+/*****************************************************************************
+*   Function : See module specification (.h-file).
+*****************************************************************************/
+{
+  while( *pStr )
+  {
+    wr_ch_LCD( *pStr );
+    pStr++;
+  }
+}
+>>>>>>> 3a2f5e97da157118325a198c873213d1963349eb
+
+void move_LCD( INT8U x, INT8U y )
+/*****************************************************************************
+*   Function : See module specification (.h-file).
+*****************************************************************************/
+{
+  INT8U Pos;
+
+  Pos = y*0x40 + x;
+  Pos |= 0x80;
+  wr_ch_LCD( ESC );
+  wr_ch_LCD( Pos );
+>>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 }
 
 void wr_ctrl_LCD_low( INT8U Ch )
