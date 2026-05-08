@@ -33,15 +33,6 @@ QueueHandle_t change_q;
 QueueHandle_t purchased_products_q;
 QueueHandle_t time_q;
 
-<<<<<<< HEAD
-=======
-
-typedef struct {
-    lcd_states cmd;
-    int value;
-} lcd_msg_t;
-
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 typedef enum
 {
   LCD_IDLE,
@@ -53,14 +44,11 @@ typedef enum
   LCD_DISPLAY_CHOICE_PRODUCED,
 } lcd_states;
 
-<<<<<<< HEAD
 typedef struct {
     lcd_states cmd;
     int value;
 } lcd_msg_t;
 
-=======
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 typedef enum {
     NO_PRODUCT = 0,
     ESPRESSO,           // 1
@@ -68,10 +56,7 @@ typedef enum {
     FILTER              // 3, C has automatically assigned 1,2 and 3.
 } product_t;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 /***************************    Functions     **********************************/
 static void setupHardware(void)
 /*****************************************************************************
@@ -84,31 +69,55 @@ static void setupHardware(void)
 
   // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
   init_systick();
-  LED_init();
-<<<<<<< HEAD
+  // LED_init();
+
+  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOC;
+  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOD;
+
+  volatile int delay = SYSCTL_RCGC2_R; // allow clock to start
+
+  GPIO_PORTC_DIR_R |= 0xF0; // PC4–PC7 output
+  GPIO_PORTC_DEN_R |= 0xF0;
+
+  GPIO_PORTD_DIR_R |= 0x0C; // PD2, PD3 output (adjust if needed)
+  GPIO_PORTD_DEN_R |= 0x0C;
+}
+
+
+void test_task(void *pvParameters)
+{
+    lcd_msg_t msg;
+
+    vTaskDelay(500 / portTICK_RATE_MS); // wait for LCD init
+
+    msg.cmd = LCD_IDLE;
+    msg.value = 0;
+
+    xQueueSend(lcd_queue, &msg, 0);
+
+    vTaskDelete(NULL);
 }
 
 int main(void)
 {
     setupHardware();
-=======
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 
-    key_queue =  xQueueCreate( 10, sizeof( INT8U ) ); // Is this correct?
-    uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
-    encoder_queue = xQueueCreate( 10, sizeof( INT8U ) );
+    // key_queue =  xQueueCreate( 10, sizeof( INT8U ) ); // Is this correct?
+    // uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
+    // encoder_queue = xQueueCreate( 10, sizeof( INT8U ) );
     lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
-    change_q = xQueueCreate(10, sizeof(int));
-    purchased_products_q = xQueueCreate(10, sizeof(product_t));
-    time_q = xQueueCreate(10, sizeof(int));
+    // change_q = xQueueCreate(10, sizeof(int));
+    // purchased_products_q = xQueueCreate(10, sizeof(product_t));
+    // time_q = xQueueCreate(10, sizeof(int));
 
-    xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    // xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    // xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    // xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    // xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    // xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( test_task, "test", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    // xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     vTaskStartScheduler();
     return 0;
