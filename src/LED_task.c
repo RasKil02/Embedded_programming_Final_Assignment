@@ -41,6 +41,12 @@
 
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN 128
+#define YELLOW_LED 0x0b
+#define GREEN_LED 0x07
+#define RED_LED 0x0d
+#define ESPRESSO_LATTE_GRIND_TIME 7500
+#define ESPRESSO_LATTE_BREW_TIME 14000
+#define LATTE_FROTH_TIME 6200
 
 extern QueueHandle_t change_q;
 extern QueueHandle_t purchased_products_q;
@@ -62,6 +68,11 @@ typedef enum {
     LATTE,              // 2
     FILTER              // 3, C has automatically assigned 1,2 and 3.
 } product_t;
+
+typedef struct {
+    product_t product;
+    int prepaid_amount; // in kr.
+} product_msg_t;
 
 
 /*****************************   Constants   *******************************/
@@ -93,10 +104,10 @@ void blink_green_led(void)
 *   Function :  -
 *****************************************************************************/
 {
-    GPIO_PORTF_DATA_R = 0x08;   // ON
+    GPIO_PORTF_DATA_R = GREEN_LED;   // ON
     vTaskDelay(200 / portTICK_RATE_MS);
 
-    GPIO_PORTF_DATA_R = 0x00;   // OFF
+    GPIO_PORTF_DATA_R = 0x0E;   // OFF
     vTaskDelay(200 / portTICK_RATE_MS);
 }
 
@@ -107,7 +118,7 @@ void turn_on_green_led(void)
 *   Function :  -
 *****************************************************************************/
 {
-    GPIO_PORTF_DATA_R = 0x08;
+    GPIO_PORTF_DATA_R = GREEN_LED;
 }
 
 void turn_on_red_led(void)
@@ -117,7 +128,7 @@ void turn_on_red_led(void)
 *   Function :  -
 *****************************************************************************/
 {
-    GPIO_PORTF_DATA_R = 0x02;
+    GPIO_PORTF_DATA_R = RED_LED;
 }
 
 void turn_on_yellow_led(void)
@@ -127,7 +138,7 @@ void turn_on_yellow_led(void)
 *   Function :  -
 *****************************************************************************/
 {
-    GPIO_PORTF_DATA_R = 0x04;
+    GPIO_PORTF_DATA_R = YELLOW_LED;
 }
 
 void turn_off_led(void)
@@ -137,9 +148,13 @@ void turn_off_led(void)
 *   Function :  -
 *****************************************************************************/
 {
-    GPIO_PORTF_DATA_R = 0x00;
+    GPIO_PORTF_DATA_R = 0x0E;   // OFF (active low)
 }
 
+INT8U button_pushed()
+{
+    return (GPIO_PORTF_DATA_R & 0x10) >> 4; // Returns 1 if button is pushed, 0 if not
+}
 
 
 void LED_task(void *pvParameters)
@@ -151,13 +166,19 @@ void LED_task(void *pvParameters)
 {
 
     LED_init();
+    turn_off_led();
 
     state_t STATE = IDLE;
     int time = 0;
     int time_inactive = 0;
     float prepaid_amount = 0.0f; // Placeholder
-    product_t product;
-    int change;
+    product_msg_t product_msg;
+    static int change_value = 0;
+    static int change = 0;
+    static int time_left_grind = 0;
+    static int time_left_brew = 0;
+    static int time_left_froth = 0;
+    float rate = 0.6f; // cl/s
 
     while(1)
     {
@@ -166,20 +187,23 @@ void LED_task(void *pvParameters)
             case IDLE:
             {
                 // Check change FIRST (priority)
-                if (xQueueReceive(change_q, &change, 0)) // This queue has not been created yet, note this if statement will return pdTRUE if it has a value
+                if (xQueueReceive(change_q, &change, 0))
                 {
+                    change_value = change;
                     STATE = RETURN_CASH;
                     break;
                 }
 
                 // Check product selection
-                if (xQueueReceive(purchased_products_q, &product, 0)) // This queue has not been created yet
+                if (xQueueReceive(purchased_products_q, &product_msg, 0))
                 {
-                    if (product == ESPRESSO || product == LATTE)
+                    prepaid_amount = product_msg.prepaid_amount;
+
+                    if (product_msg.product == ESPRESSO || product_msg.product == LATTE)
                     {
                         STATE = GRIND_ESPRESSO_LATTE;
                     }
-                    else if (product == FILTER)
+                    else if (product_msg.product == FILTER)
                     {
                         STATE = FILTER_COFFEE;
                     }
@@ -190,20 +214,16 @@ void LED_task(void *pvParameters)
 
             case RETURN_CASH:
             {
-                static int counter = 0;
 
-                if (counter == 0)
+                if (change_value > 0)
                 {
-                    counter = change;
+                    blink_green_led();
+                    change_value--;
                 }
 
-                if (counter > 0)
-                {
-                    blink_green_led();   // one blink step
-                    counter--;
-                }
                 else
                 {
+                    change_value = 0;
                     STATE = IDLE;
                 }
 
@@ -213,16 +233,14 @@ void LED_task(void *pvParameters)
 
             case GRIND_ESPRESSO_LATTE:
             {
-                static int time_left_grind = 0;
-
                 if (time_left_grind == 0)
                 {
-                    time_left_grind = 7500;
+                    time_left_grind = ESPRESSO_LATTE_GRIND_TIME;
                 }
 
                 turn_on_yellow_led();
 
-                vTaskDelay(100);
+                vTaskDelay(90 / portTICK_RATE_MS);
                 time_left_grind -= 100;
 
                 if (time_left_grind <= 0)
@@ -237,10 +255,8 @@ void LED_task(void *pvParameters)
 
             case FILTER_COFFEE:
             {
-                float rate = 0.6f; // cl/s
-
                 // This returns 1 if the button was pushed and 0 if not
-                if (!(GPIO_PORTF_DATA_R & 0x10))
+                if (!button_pushed()) // Button pushed
                 {
                     time_inactive = 0;
 
@@ -256,8 +272,9 @@ void LED_task(void *pvParameters)
                     }
                 }
 
-                if ((GPIO_PORTF_DATA_R & 0x10))
+                if (button_pushed()) // Button not pushed
                 {
+                    turn_off_led();
                     time_inactive += 100;
                 }
 
@@ -270,7 +287,7 @@ void LED_task(void *pvParameters)
                     time_inactive = 0;
                 }
 
-                if (time_inactive >= 5000)
+                if (time_inactive > 5000)
                 {
                     turn_off_led();
                     STATE = IDLE;
@@ -279,7 +296,7 @@ void LED_task(void *pvParameters)
                     time_inactive = 0;
                 }
 
-                vTaskDelay(90);
+                vTaskDelay(90 / portTICK_RATE_MS);
                 time += 100;
                 prepaid_amount -= 0.1; // kr.
 
@@ -288,16 +305,14 @@ void LED_task(void *pvParameters)
 
             case BREW_ESPRESSO_LATTE:
             {
-                static int time_left_brew = 0;
-
                 if (time_left_brew == 0)
                 {
-                    time_left_brew = 14000;
+                    time_left_brew = ESPRESSO_LATTE_BREW_TIME;
                 }
 
                 turn_on_red_led();
 
-                vTaskDelay(100);
+                vTaskDelay(90 / portTICK_RATE_MS);
                 time_left_brew -= 100;
 
                 if (time_left_brew <= 0)
@@ -305,11 +320,11 @@ void LED_task(void *pvParameters)
                     turn_off_led();
                     time_left_brew = 0;
 
-                    if (product == ESPRESSO)
+                    if (product_msg.product == ESPRESSO)
                     {
                         STATE = IDLE;
                     }
-                    else if (product == LATTE)
+                    else if (product_msg.product == LATTE)
                     {
                         STATE = FROTH_MILK;
                     }
@@ -320,16 +335,14 @@ void LED_task(void *pvParameters)
 
             case FROTH_MILK:
             {
-                static int time_left_froth = 0;
-
                 if (time_left_froth == 0)
                 {
-                    time_left_froth = 6200;
+                    time_left_froth = LATTE_FROTH_TIME;
                 }
 
                 turn_on_green_led();
 
-                vTaskDelay(100);
+                vTaskDelay(90 / portTICK_RATE_MS);
                 time_left_froth -= 100;
 
                 if (time_left_froth <= 0)

@@ -44,8 +44,10 @@ void turn_on_green_led(void);
 void turn_off_led(void);
 
 void LED_init(void);
+INT8U button_pushed(void);
 
 void LED_task(void *pvParameters);
+
 
 
 /****************************** End Of Module *******************************/

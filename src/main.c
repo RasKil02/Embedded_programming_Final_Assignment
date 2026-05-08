@@ -56,6 +56,11 @@ typedef enum {
     FILTER              // 3, C has automatically assigned 1,2 and 3.
 } product_t;
 
+typedef struct {
+    product_t product;
+    int prepaid_amount; // in kr.
+} product_msg_t;
+
 /***************************    Functions     **********************************/
 void init_gpio(void)
 /*****************************************************************************
@@ -105,69 +110,22 @@ static void setupHardware(void)
   init_gpio();
 }
 
-
 void test_task(void *pvParameters)
 {
-    lcd_msg_t msg1;
+    vTaskDelay(1000 / portTICK_RATE_MS);
 
-    vTaskDelay(500 / portTICK_RATE_MS); // wait for LCD init
+    int change = 5;
+    xQueueSend(change_q, &change, portMAX_DELAY);
 
-    msg1.cmd = LCD_IDLE;
-    msg1.value = 0;
+    vTaskDelay(5000 / portTICK_RATE_MS);
 
-    xQueueSend(lcd_queue, &msg1, 0);
+    product_msg_t product_msg;
+    product_msg.product = FILTER;
+    product_msg.prepaid_amount = 16; // 7 kr.
 
-    vTaskDelay(10000 / portTICK_RATE_MS);
+    xQueueSend(purchased_products_q, &product_msg, portMAX_DELAY);
 
-    lcd_msg_t msg2;
-    msg2.cmd = LCD_DISPLAY_CHOICE;
-    msg2.value = 1; // Simulate choice 1 (Espresso)
-
-    xQueueSend(lcd_queue, &msg2, 0);
-
-    vTaskDelay(10000 / portTICK_RATE_MS);
-
-    lcd_msg_t msg3;
-    msg3.cmd = LCD_DISPLAY_CASH_OR_CARD;
-    msg3.value = 0;
-
-    xQueueSend(lcd_queue, &msg3, 0);
-
-    vTaskDelay(10000 / portTICK_RATE_MS);
-
-    lcd_msg_t msg4;
-    msg4.cmd = LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN;
-    msg4.value = 0;
-
-    xQueueSend(lcd_queue, &msg4, 0);
-
-    vTaskDelay(10000 / portTICK_RATE_MS);
-
-    lcd_msg_t msg5;
-    msg5.cmd = LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED;
-    msg5.value = 0;
-
-    xQueueSend(lcd_queue, &msg5, 0);
-
-    vTaskDelay(10000 / portTICK_RATE_MS);
-
-    lcd_msg_t msg6;
-    msg6.cmd = LCD_DISPLAY_CHOICE_PRODUCED;
-    msg6.value = 0;
-
-    xQueueSend(lcd_queue, &msg6, 0);
-
-    vTaskDelay(10000 / portTICK_RATE_MS);
-
-    lcd_msg_t msg7;
-    msg7.cmd = LCD_RETURN_CASH;
-
-
-    xQueueSend(lcd_queue, &msg7, 0);
-
-    vTaskDelay(10000 / portTICK_RATE_MS);
-
-    vTaskDelete(NULL);
+    vTaskDelete(NULL);   // stop task
 }
 
 
@@ -175,22 +133,27 @@ int main(void)
 {
     setupHardware();
 
-    // key_queue =  xQueueCreate( 10, sizeof( INT8U ) ); // Is this correct?
     // uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
     // encoder_queue = xQueueCreate( 10, sizeof( INT8U ) );
-    lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
-    // change_q = xQueueCreate(10, sizeof(int));
-    // purchased_products_q = xQueueCreate(10, sizeof(product_t));
-    // time_q = xQueueCreate(10, sizeof(int));
+    key_queue =  xQueueCreate( 10, sizeof( INT8U ) );
+    change_q = xQueueCreate(10, sizeof(int));
+    purchased_products_q = xQueueCreate(10, sizeof(product_msg_t));
+    time_q = xQueueCreate(10, sizeof(int));
+
+    // FINISHED:
+    // lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
 
     // xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     // xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     // xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     // xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    // xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( test_task, "test", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+
     // xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+
+    // FINISHED:
+    // xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
 
     vTaskStartScheduler();
     return 0;
