@@ -129,6 +129,7 @@ void test_task(void *pvParameters)
 
     lcd_msg_t msg3;
     msg3.cmd = LCD_DISPLAY_CASH_OR_CARD;
+    msg3.value = 0;
 
     xQueueSend(lcd_queue, &msg3, 0);
 
@@ -136,6 +137,7 @@ void test_task(void *pvParameters)
 
     lcd_msg_t msg4;
     msg4.cmd = LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN;
+    msg4.value = 0;
 
     xQueueSend(lcd_queue, &msg4, 0);
 
@@ -143,6 +145,7 @@ void test_task(void *pvParameters)
 
     lcd_msg_t msg5;
     msg5.cmd = LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED;
+    msg5.value = 0;
 
     xQueueSend(lcd_queue, &msg5, 0);
 
@@ -150,6 +153,7 @@ void test_task(void *pvParameters)
 
     lcd_msg_t msg6;
     msg6.cmd = LCD_DISPLAY_CHOICE_PRODUCED;
+    msg6.value = 0;
 
     xQueueSend(lcd_queue, &msg6, 0);
 
@@ -157,6 +161,7 @@ void test_task(void *pvParameters)
 
     lcd_msg_t msg7;
     msg7.cmd = LCD_RETURN_CASH;
+
 
     xQueueSend(lcd_queue, &msg7, 0);
 

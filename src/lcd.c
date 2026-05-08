@@ -39,8 +39,7 @@ extern QueueHandle_t lcd_queue;
 #define FALSE 0
 #define TRUE 1
 
-typedef enum
-{
+typedef enum {
   LCD_IDLE,
   LCD_DISPLAY_CASH_OR_CARD,
   LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
@@ -239,25 +238,25 @@ void lcd_init()
 
 void lcd_print(char *str)
 {
+  int pos1 = 0;
+  int pos2 = 0;
+
     while(*str)
     {
+        move_LCD(pos1, pos2);
         out_LCD(*str);
         str++;
+        pos1++;
+        if(pos1 > 15)
+        {
+            pos1 = 0;
+            pos2++;
+            if(pos2 > 1)
+            {
+                pos2 = 0;
+            }
+        }
     }
-}
-
-void init_lcd_hardware(void)
-{
-  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOC;
-  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOD;
-
-  volatile int delay = SYSCTL_RCGC2_R; // allow clock to start
-
-  GPIO_PORTC_DIR_R |= 0xF0; // PC4–PC7 output
-  GPIO_PORTC_DEN_R |= 0xF0;
-
-  GPIO_PORTD_DIR_R |= 0x0C; // PD2, PD3 output (adjust if needed)
-  GPIO_PORTD_DEN_R |= 0x0C;
 }
 
 void slide_text(char *str)
@@ -271,7 +270,7 @@ void slide_text(char *str)
         move_LCD(offset, 0);   // flyt startposition
         lcd_print(str);        // print hele string
 
-        vTaskDelay(300 / portTICK_RATE_MS);
+        vTaskDelay(3000 / portTICK_RATE_MS);
 
         offset++;
 
@@ -302,55 +301,7 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-
-            out_LCD('C');
-            move_LCD(1,0);
-            out_LCD('h');
-            move_LCD(2,0);
-            out_LCD('o');
-            move_LCD(3,0);
-            out_LCD('o');
-            move_LCD(4,0);
-            out_LCD('s');
-            move_LCD(5,0);
-            out_LCD('e');
-
-            move_LCD(7,0);
-            out_LCD('C');
-            move_LCD(8,0);
-            out_LCD('o');
-            move_LCD(9,0);
-            out_LCD('f');
-            move_LCD(10,0);
-            out_LCD('f');
-            move_LCD(11,0);
-            out_LCD('e');
-            move_LCD(12,0);
-            out_LCD('e');
-            move_LCD(13,0);
-            out_LCD(':');
-
-            move_LCD(0,1);
-            out_LCD('E');
-            move_LCD(1,1);
-            out_LCD(':');
-            move_LCD(2,1);
-            out_LCD('1');
-
-            move_LCD(4,1);
-            out_LCD('L');
-            move_LCD(5,1);
-            out_LCD(':');
-            move_LCD(6,1);
-            out_LCD('2');
-
-            move_LCD(8,1);
-            out_LCD('F');
-            move_LCD(9,1);
-            out_LCD(':');
-            move_LCD(10,1);
-            out_LCD('3');
-
+            lcd_print("Choose Coffee:  1: E 2: L 3: F");
             break;
         }
 
@@ -358,6 +309,7 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
+            lcd_print("Pay with:       1: Cash 2: Card"); // 15 char and then it switches lines
             break;
         }
 
@@ -365,26 +317,23 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-            out_LCD('W');
 
-            /*
-            lcd_print("You chose:");
-            move_LCD(0,1);
             int choice = event.value; // 1, 2 or 3
-            if (choice == '1')
+
+            if (choice == 1)
             {
-                lcd_print("E15DKK");
+                lcd_print("You chose:      E15DKK");
 
             }
-            else if (choice == '2')
+            else if (choice == 2)
             {
-                lcd_print("L27DKK");
+                lcd_print("You chose:      L27DKK");
             }
-            else if (choice == '3')
+            else if (choice == 3)
             {
-                lcd_print("F3DKKCL");
+                lcd_print("You chose:      F3DKKCL");
             }
-            */
+
             break;
         }
 
@@ -392,7 +341,7 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Enter card number:");
+            lcd_print("Please Enter    card nr. & PIN:");
             break;
         }
 
@@ -410,20 +359,15 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Remove");
-            move_LCD(6,0);
-            lcd_print("coffee");
+            lcd_print("Remove coffee");
             break;
-
         }
 
         case LCD_RETURN_CASH :
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Returning");
-            move_LCD(0,1);
-            lcd_print("change");
+            lcd_print("Returning       change...");
             break;
         }
       }
