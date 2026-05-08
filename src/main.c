@@ -49,10 +49,6 @@ typedef struct {
     int value;
 } lcd_msg_t;
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 5fea24f2ee74389e2a7f018879c63b8b8b5c6263
 typedef enum {
     NO_PRODUCT = 0,
     ESPRESSO,           // 1
@@ -60,10 +56,6 @@ typedef enum {
     FILTER              // 3, C has automatically assigned 1,2 and 3.
 } product_t;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 5fea24f2ee74389e2a7f018879c63b8b8b5c6263
 /***************************    Functions     **********************************/
 static void setupHardware(void)
 /*****************************************************************************
@@ -76,7 +68,6 @@ static void setupHardware(void)
 
   // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
   init_systick();
-<<<<<<< HEAD
   // LED_init();
 
   SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOC;
@@ -104,9 +95,6 @@ void test_task(void *pvParameters)
     xQueueSend(lcd_queue, &msg, 0);
 
     vTaskDelete(NULL);
-=======
-  LED_init();
->>>>>>> 5fea24f2ee74389e2a7f018879c63b8b8b5c6263
 }
 
 int main(void)
