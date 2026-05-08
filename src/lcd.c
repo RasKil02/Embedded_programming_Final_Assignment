@@ -33,6 +33,8 @@
 
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN   128
+#define FALSE       0
+#define TRUE        1
 
 extern QueueHandle_t lcd_queue;
 
@@ -75,29 +77,7 @@ const INT8U LCD_init_sequense[]=
 
 INT8U LCD_init;
 
-
-
 /*****************************   Functions   *******************************/
-INT8U wr_ch_LCD( INT8U Ch )
-/*****************************************************************************
-*   OBSERVE  : LCD_PROC NEEDS 20 mS TO PRINT OUT ONE CHARACTER
-*   Function : See module specification (.h-file).
-*****************************************************************************/
-{
-  return( xQueueSend( Q_LCD, &Ch, WAIT_FOR_EVER ) );
-}
-
-void wr_str_LCD( INT8U *pStr )
-/*****************************************************************************
-*   Function : See module specification (.h-file).
-*****************************************************************************/
-{
-  while( *pStr )
-  {
-    wr_ch_LCD( *pStr );
-    pStr++;
-  }
-}
 
 void move_LCD( INT8U x, INT8U y )
 /*****************************************************************************
