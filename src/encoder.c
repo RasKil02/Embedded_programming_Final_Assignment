@@ -33,7 +33,7 @@
 #define QUEUE_LEN 128
 
 extern QueueHandle_t encoder_queue;
-
+extern QueueHandle_t encoder_button_queue;
 #define DIGI_A   0x20   // PA5
 #define DIGI_B   0x40   // PA6
 #define DIGI_P2  0x80   // PA7
@@ -108,7 +108,7 @@ INT8U Encoder_readButton( void )
 {
 
     INT8U value_button = Encoder_getButton();
-    return( xQueueSend( encoder_queue, &value_button, portMAX_DELAY ) );    // Send value to queue
+    return( xQueueSend( encoder_button_queue, &value_button, 0 ) );    // Send value to queue
 }
 
 void Encoder_init( void )
@@ -140,7 +140,6 @@ extern void encoder_task( void *pvParameters )
     {
         INT8U A = Encoder_getA();
         INT8U B = Encoder_getB();
-        INT8U button = Encoder_getButton();
 
         switch( state )
         {
@@ -148,22 +147,17 @@ extern void encoder_task( void *pvParameters )
             {
                 if( A != lastA )
                 {
-                    if( A == B )
+                    if( B == A )
                     {
-                        amount++;
+                        amount += 5;
                     }
                     else
                     {
-                        amount--;
+                        amount += 20;
                     }
 
                     state = SEND_TO_LCD;
                     lastA = A;
-                }
-
-                if( button == 1 )
-                {
-                    state = SEND_FINAL_AMOUNT;
                 }
                 break;
             }
@@ -174,15 +168,8 @@ extern void encoder_task( void *pvParameters )
                 state = IDLE;
                 break;
             }
-
-            case SEND_FINAL_AMOUNT:
-            {
-                xQueueSend( encoder_queue, &amount, portMAX_DELAY );
-                state = IDLE;
-                break;
-            }
         }
 
-        vTaskDelay( pdMS_TO_TICKS( 10 ) );
+        vTaskDelay(pdMS_TO_TICKS(2));
     }
 }

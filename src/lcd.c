@@ -29,12 +29,15 @@
 
 // Own includes
 #include "lcd.h"
+#include <stdio.h>
 
 
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN   128
 
 extern QueueHandle_t lcd_queue;
+extern QueueHandle_t encoder_queue;
+extern QueueHandle_t encoder_button_queue;
 
 #define FALSE 0
 #define TRUE 1
@@ -42,6 +45,7 @@ extern QueueHandle_t lcd_queue;
 typedef enum {
   LCD_IDLE,
   LCD_DISPLAY_CASH_OR_CARD,
+  LCD_DISPLAY_CASH_AMOUNT,
   LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
   LCD_RETURN_CASH,
   LCD_DISPLAY_CHOICE,
@@ -290,6 +294,9 @@ void lcd_task(void *pvParameters)
 {
   lcd_msg_t event;
   lcd_init();
+  int cash = 0;
+  char cash_c[16];
+  int choice;
 
   while(1)
   {
@@ -318,20 +325,91 @@ void lcd_task(void *pvParameters)
             clr_LCD();
             home_LCD();
 
-            int choice = event.value; // 1, 2 or 3
+            choice = event.value; // 1, 2 or 3
 
-            if (choice == '1')
+            if (choice == 1)
             {
                 lcd_print("You chose:      E15DKK");
 
             }
-            else if (choice == '2')
+            else if (choice == 2)
             {
                 lcd_print("You chose:      L27DKK");
             }
-            else if (choice == '3')
+            else if (choice == 3)
             {
                 lcd_print("You chose:      F3DKKCL");
+            }
+
+            break;
+        }
+
+        case LCD_DISPLAY_CASH_AMOUNT :
+        {
+            INT16S encoder_value;
+            INT8U last_button = 0;
+            INT8U price = 0;
+
+            choice = event.value;
+
+            if(choice == 1)
+                price = 15;
+
+            if(choice == 2)
+                price = 27;
+
+            if(choice == 3)
+                price = 3;
+
+            cash = 0;
+
+            clr_LCD();
+            home_LCD();
+
+            while(1)
+            {
+                // check button
+                if((GPIO_PORTF_DATA_R & 0x10) == 0)
+                {
+                    if(cash >= price)
+                    {
+                        clr_LCD();
+                        home_LCD();
+
+                        lcd_print("       paid");
+
+                        move_LCD(0,1);
+
+                        sprintf(cash_c, "%d DKK", cash);
+                        lcd_print(cash_c);
+                        vTaskDelay(pdMS_TO_TICKS(1000));
+
+                        break;
+                    }
+                    if(cash < price)
+                    {
+                        clr_LCD();
+                        home_LCD();
+
+                        lcd_print("       too low");
+
+                        sprintf(cash_c, "%d DKK", cash);
+                        lcd_print(cash_c);
+                    }
+                }
+                // wait for encoder movement
+                if(xQueueReceive(encoder_queue,
+                                  &encoder_value,
+                                  pdMS_TO_TICKS(1)))
+                 {
+                     cash = encoder_value;
+
+                     clr_LCD();
+                     home_LCD();
+
+                     sprintf(cash_c, "%d DKK", cash);
+                     lcd_print(cash_c);
+                 }
             }
 
             break;
