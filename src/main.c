@@ -33,15 +33,6 @@ QueueHandle_t change_q;
 QueueHandle_t purchased_products_q;
 QueueHandle_t time_q;
 
-<<<<<<< HEAD
-=======
-
-typedef struct {
-    lcd_states cmd;
-    int value;
-} lcd_msg_t;
-
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 typedef enum
 {
   LCD_IDLE,
@@ -53,14 +44,12 @@ typedef enum
   LCD_DISPLAY_CHOICE_PRODUCED,
 } lcd_states;
 
-<<<<<<< HEAD
 typedef struct {
     lcd_states cmd;
     int value;
 } lcd_msg_t;
 
 =======
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 typedef enum {
     NO_PRODUCT = 0,
     ESPRESSO,           // 1
@@ -68,10 +57,6 @@ typedef enum {
     FILTER              // 3, C has automatically assigned 1,2 and 3.
 } product_t;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 /***************************    Functions     **********************************/
 static void setupHardware(void)
 /*****************************************************************************
@@ -85,14 +70,11 @@ static void setupHardware(void)
   // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
   init_systick();
   LED_init();
-<<<<<<< HEAD
 }
 
 int main(void)
 {
     setupHardware();
-=======
->>>>>>> 89e283f5d5424f2f8b56f94cc4cb986be2954ad2
 
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) ); // Is this correct?
     uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
