@@ -127,6 +127,41 @@ void test_task(void *pvParameters)
 
     vTaskDelay(10000 / portTICK_RATE_MS);
 
+    lcd_msg_t msg3;
+    msg3.cmd = LCD_DISPLAY_CASH_OR_CARD;
+
+    xQueueSend(lcd_queue, &msg3, 0);
+
+    vTaskDelay(10000 / portTICK_RATE_MS);
+
+    lcd_msg_t msg4;
+    msg4.cmd = LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN;
+
+    xQueueSend(lcd_queue, &msg4, 0);
+
+    vTaskDelay(10000 / portTICK_RATE_MS);
+
+    lcd_msg_t msg5;
+    msg5.cmd = LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED;
+
+    xQueueSend(lcd_queue, &msg5, 0);
+
+    vTaskDelay(10000 / portTICK_RATE_MS);
+
+    lcd_msg_t msg6;
+    msg6.cmd = LCD_DISPLAY_CHOICE_PRODUCED;
+
+    xQueueSend(lcd_queue, &msg6, 0);
+
+    vTaskDelay(10000 / portTICK_RATE_MS);
+
+    lcd_msg_t msg7;
+    msg7.cmd = LCD_RETURN_CASH;
+
+    xQueueSend(lcd_queue, &msg7, 0);
+
+    vTaskDelay(10000 / portTICK_RATE_MS);
+
     vTaskDelete(NULL);
 }
 
