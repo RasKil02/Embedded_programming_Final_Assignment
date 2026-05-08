@@ -21,11 +21,11 @@
 // For freeRTOS
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
-#include "emp_type.h"
-#include "systick_frt.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
+#include "emp_type.h"
 
 // Own includes
 #include "lcd.h"
@@ -78,6 +78,29 @@ const INT8U LCD_init_sequense[]=
 INT8U LCD_init;
 
 /*****************************   Functions   *******************************/
+<<<<<<< HEAD
+=======
+INT8U wr_ch_LCD( INT8U Ch )
+/*****************************************************************************
+*   OBSERVE  : LCD_PROC NEEDS 20 mS TO PRINT OUT ONE CHARACTER
+*   Function : See module specification (.h-file).
+*****************************************************************************/
+{
+  return( xQueueSend( Q_LCD, &Ch, 0 ));
+}
+
+void wr_str_LCD( INT8U *pStr )
+/*****************************************************************************
+*   Function : See module specification (.h-file).
+*****************************************************************************/
+{
+  while( *pStr )
+  {
+    wr_ch_LCD( *pStr );
+    pStr++;
+  }
+}
+>>>>>>> 3a2f5e97da157118325a198c873213d1963349eb
 
 void move_LCD( INT8U x, INT8U y )
 /*****************************************************************************
@@ -242,6 +265,15 @@ void lcd_init()
     wait( 100 );
 }
 
+void lcd_print(char *str)
+{
+    while(*str)
+    {
+        out_LCD(*str);
+        str++;
+    }
+}
+
 void lcd_task(void *pvParameters)
 /*****************************************************************************
 *   Input    :
@@ -260,80 +292,90 @@ void lcd_task(void *pvParameters)
       {
         case LCD_IDLE :
         {
-          lcd_clear();
-          lcd_home();
-          wr_str_LCD("Choose coffee:");
-          move_LCD(0,1);
-          wr_str_LCD("1:E");
-          move_LCD(5,1);
-          wr_str_LCD("2:L");
-          move_LCD(10,1);
-          wr_str_LCD("3:F");
-          break;
+            lcd_clear();
+            lcd_home();
+            lcd_print("Choose coffee:");
+            lcd_print("1:E");
+            move_LCD(5,1);
+            lcd_print("2:L");
+            move_LCD(10,1);
+            lcd_print("3:F");
+            break;
         }
 
         case LCD_DISPLAY_CASH_OR_CARD :
         {
-          lcd_clear();
-          lcd_home();
-          wr_str_LCD("Pay with:");
-          move_LCD(0,1);
-          wr_str_LCD("1:Cash");
-          move_LCD(7,1);
-          wr_str_LCD("2:Card");
-          break;
+            lcd_clear();
+            lcd_home();
+            lcd_print("Pay with:");
+            move_LCD(0,1);
+            lcd_print("1:Cash");
+            move_LCD(7,1);
+            lcd_print("2:Card");
+            break;
         }
 
         case LCD_DISPLAY_CHOICE :
         {
-          lcd_clear();
-          lcd_home();
-          wr_str_LCD("You chose:");
-          move_LCD(0,1);
-          int choice = event.value; // 1, 2 or 3
-          if (choice == '1')
-          {
-              wr_str_LCD("E15DKK");
+            lcd_clear();
+            lcd_home();
+            lcd_print("You chose:");
+            move_LCD(0,1);
+            int choice = event.value; // 1, 2 or 3
+            if (choice == '1')
+            {
+                lcd_print("E15DKK");
 
-          }
-          else if (choice == '2')
-          {
-              wr_str_LCD("L27DKK");
-          }
-          else if (choice == '3')
-          {
-              wr_str_LCD("F3DKKCL");
-          }
-          break;
+            }
+            else if (choice == '2')
+            {
+                lcd_print("L27DKK");
+            }
+            else if (choice == '3')
+            {
+                lcd_print("F3DKKCL");
+            }
+            break;
         }
 
         case LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN :
-          lcd_clear();
-          lcd_home();
-          wr_str_LCD("Enter card number:");
-          break;
+        {
+            lcd_clear();
+            lcd_home();
+            lcd_print("Enter card number:");
+            break;
+        }
+
 
         case LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED :
-          lcd_clear();
-          lcd_home();
-          wr_str_LCD("Dispensing...");
-          break;
+        {
+            lcd_clear();
+            lcd_home();
+            lcd_print("Dispensing...");
+            break;
+        }
+
 
         case LCD_DISPLAY_CHOICE_PRODUCED :
-          lcd_clear();
-          lcd_home();
-          wr_str_LCD("Remove");
-          move_LCD(6,0);
-          wr_str_LCD("coffee");
-          break;
+        {
+            lcd_clear();
+            lcd_home();
+            lcd_print("Remove");
+            move_LCD(6,0);
+            lcd_print("coffee");
+            break;
 
-        case RETURN_CASH :
-          lcd_clear();
-          lcd_home();
-          wr_str_LCD("Returning");
-          move_LCD(0,1);
-          wr_str_LCD("change");
-          break;
+        }
+
+        case LCD_RETURN_CASH :
+        {
+            lcd_clear();
+            lcd_home();
+            lcd_print("Returning");
+            move_LCD(0,1);
+            lcd_print("change");
+            break;
+        }
       }
       vTaskDelay(10 / portTICK_RATE_MS);
     }
