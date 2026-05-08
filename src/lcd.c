@@ -320,16 +320,16 @@ void lcd_task(void *pvParameters)
 
             int choice = event.value; // 1, 2 or 3
 
-            if (choice == 1)
+            if (choice == '1')
             {
                 lcd_print("You chose:      E15DKK");
 
             }
-            else if (choice == 2)
+            else if (choice == '2')
             {
                 lcd_print("You chose:      L27DKK");
             }
-            else if (choice == 3)
+            else if (choice == '3')
             {
                 lcd_print("You chose:      F3DKKCL");
             }

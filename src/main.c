@@ -112,20 +112,45 @@ static void setupHardware(void)
 
 void test_task(void *pvParameters)
 {
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    INT8U input;
 
-    int change = 5;
-    xQueueSend(change_q, &change, portMAX_DELAY);
+    vTaskDelay(pdMS_TO_TICKS(1000));
 
-    vTaskDelay(5000 / portTICK_RATE_MS);
+    xQueueReceive(key_queue, &input, portMAX_DELAY);
 
-    product_msg_t product_msg;
-    product_msg.product = FILTER;
-    product_msg.prepaid_amount = 16; // 7 kr.
+    product_t product = NO_PRODUCT;
 
+    switch(input)
+    {
+        case '1':
+            product = ESPRESSO;
+            break;
+
+        case '2':
+            product = LATTE;
+            break;
+
+        case '3':
+            product = FILTER;
+            break;
+    }
+
+    product_msg_t product_msg =
+    {
+        .product = product,
+        .prepaid_amount = 15
+    };
+
+    lcd_msg_t lcd_msg =
+    {
+        .cmd = LCD_DISPLAY_CHOICE,
+        .value = input
+    };
+
+    xQueueSend(lcd_queue, &lcd_msg, portMAX_DELAY);
     xQueueSend(purchased_products_q, &product_msg, portMAX_DELAY);
 
-    vTaskDelete(NULL);   // stop task
+    vTaskDelete(NULL);
 }
 
 
@@ -135,25 +160,25 @@ int main(void)
 
     // uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
     // encoder_queue = xQueueCreate( 10, sizeof( INT8U ) );
+
+    // FINISHED:
+    lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) );
     change_q = xQueueCreate(10, sizeof(int));
     purchased_products_q = xQueueCreate(10, sizeof(product_msg_t));
     time_q = xQueueCreate(10, sizeof(int));
 
-    // FINISHED:
-    // lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
-
     // xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     // xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    // xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     // xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( test_task, "test", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-
-    // xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     // FINISHED:
-    // xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( test_task, "test", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+
+    // xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     vTaskStartScheduler();
     return 0;
