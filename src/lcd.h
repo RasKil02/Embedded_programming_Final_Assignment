@@ -49,6 +49,7 @@ void wr_ctrl_LCD( INT8U Ch );
 void wr_ctrl_LCD_low( INT8U Ch );
 void wr_ctrl_LCD_high( INT8U Ch );
 void lcd_init();
+void lcd_print(char *str);
 
 /*****************************************************************************
 *   Input    : -
