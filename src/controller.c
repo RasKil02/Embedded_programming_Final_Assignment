@@ -77,10 +77,10 @@ typedef struct {
 #define STANDARD_COFFEE_AMOUNT 1        // standard amount of coffee in cl for espresso and latte
 
 /*****************************   Variables   ***********************/
-const INT8U espresso = 15; 
+const INT8U espresso = 15;
 const INT8U latte = 27;
-const INT8U filter = 3;  
- 
+const INT8U filter = 3;
+
 
 /*****************************   Functions   *******************************/
 
@@ -136,14 +136,14 @@ void controller_task(void *pvParameters)
                 msg.value = input;
 
                 xQueueSend(lcd_queue, &msg, 0);   // Send choice of coffee to LCD task
-                
+
                 if (xQueueReceive(key_queue, &input, 0))
-                {   
+                {
                     if (input == '1')
                     {
                         STATE = C_RECEIVING_CASH;
                     }
-                    
+
                     if (input == '2')
                     {
                         STATE = C_WAIT_FOR_CARD;
@@ -151,21 +151,21 @@ void controller_task(void *pvParameters)
                 }
                 break;
             }
-            
+
             case C_RECEIVING_CASH :
             {
                 if (xQueueReceive(key_queue, &input, 0))
-                {   
+                {
                     if (input == '1')
                     {
                         price = espresso;
                     }
-                    
+
                     if (input == '2')
                     {
                         price = latte;
                     }
-                    
+
                     if (input == '3')
                     {
                         price = filter;
@@ -175,7 +175,7 @@ void controller_task(void *pvParameters)
                 if (xQueueReceive(encoder_queue, &money, 0))
                 {
                     if (money >= price)
-                    {   
+                    {
                         change_price = money - price;
                         STATE = C_RETURN_CASH;
                     }
@@ -188,7 +188,7 @@ void controller_task(void *pvParameters)
                 msg.cmd = LCD_RETURN_CASH;
                 msg.value = change_price;
 
-                xQueueSend(lcd_queue, &msg, 0); 
+                xQueueSend(lcd_queue, &msg, 0);
                 xQueueSend(change_q, &change_price, 0); // Send change to LED task
 
                 STATE = C_PRODUCE_CHOICE;
@@ -244,7 +244,7 @@ void controller_task(void *pvParameters)
                 else if (uart_product.price == latte)
                 {
                     uart_product.coffe_type = "Latte";
-                    uart_product.amount = STANDARD_COFFEE_AMOUNT; 
+                    uart_product.amount = STANDARD_COFFEE_AMOUNT;
                     uart_product.price = price;
                     uart_product.time_of_day = 0;
                     uart_product.payment_type = input; // This is 1 or 2, logic will be handled in UART task
@@ -256,7 +256,7 @@ void controller_task(void *pvParameters)
 
                     if (time_spent_brewing < INITIAL_BREWING_TIME_MS)
                     {
-                        amount_coffee = INITIAL_BREWING_RATE * time_spent_brewing / MS_TO_S; 
+                        amount_coffee = INITIAL_BREWING_RATE * time_spent_brewing / MS_TO_S;
                         uart_product.amount = amount_coffee;
                     }
                     else
@@ -271,9 +271,9 @@ void controller_task(void *pvParameters)
 
                     if (input == '1') // cash
                     {
-                        uart_product.card_number = 0;                    
+                        uart_product.card_number = 0;
                     }
-                
+
                     if (input == '2') // card payment
                     {
                         uart_product.card_number = card_number;

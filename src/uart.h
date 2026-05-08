@@ -22,7 +22,6 @@
 
 /***************************** Include files *******************************/
 #include "emp_type.h"
-#include "tmodel.h"
 #include "uart.h"
 #include "systick_frt.h"
 #include "FreeRTOS.h"

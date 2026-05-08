@@ -22,8 +22,6 @@
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
-#include "glob_def.h"
-#include "tmodel.h"
 
 // Own includes
 #include "lcd.h"
@@ -53,19 +51,19 @@ typedef struct {
 } lcd_msg_t;
 
 /*****************************   Constants   *******************************/
-const INT8U LCD_init_sequense[]= 
+const INT8U LCD_init_sequense[]=
 {
-  0x30,		// Reset
-  0x30,		// Reset
-  0x30,		// Reset
-  0x20,		// Set 4bit interface
-  0x28,		// 2 lines Display
-  0x0C,		// Display ON, Cursor OFF, Blink OFF
-  0x06,		// Cursor Increment
-  0x01,		// Clear Display
+  0x30,     // Reset
+  0x30,     // Reset
+  0x30,     // Reset
+  0x20,     // Set 4bit interface
+  0x28,     // 2 lines Display
+  0x0C,     // Display ON, Cursor OFF, Blink OFF
+  0x06,     // Cursor Increment
+  0x01,     // Clear Display
   0x02,   // Home
-  0xFF		// stop
-}; 
+  0xFF      // stop
+};
 
 /*****************************   Variables   *******************************/
 //INT8U LCD_buf[QUEUE_LEN];
@@ -80,7 +78,7 @@ INT8U LCD_init;
 /*****************************   Functions   *******************************/
 INT8U wr_ch_LCD( INT8U Ch )
 /*****************************************************************************
-*   OBSERVE  : LCD_PROC NEEDS 20 mS TO PRINT OUT ONE CHARACTER 
+*   OBSERVE  : LCD_PROC NEEDS 20 mS TO PRINT OUT ONE CHARACTER
 *   Function : See module specification (.h-file).
 *****************************************************************************/
 {
@@ -95,7 +93,7 @@ void wr_str_LCD( INT8U *pStr )
   while( *pStr )
   {
     wr_ch_LCD( *pStr );
-	pStr++;
+    pStr++;
   }
 }
 
@@ -121,24 +119,24 @@ void wr_ctrl_LCD_low( INT8U Ch )
 {
   INT8U temp;
   volatile int i;
-  
+
   temp = GPIO_PORTC_DATA_R & 0x0F;
   temp  = temp | ((Ch & 0x0F) << 4);
   GPIO_PORTC_DATA_R  = temp;
   for( i=0; i<1000; i )
-	  i++;
+      i++;
   GPIO_PORTD_DATA_R &= 0xFB;        // Select Control mode, write
   for( i=0; i<1000; i )
-	  i++;
-  GPIO_PORTD_DATA_R |= 0x08;		// Set E High
+      i++;
+  GPIO_PORTD_DATA_R |= 0x08;        // Set E High
 
   for( i=0; i<1000; i )
-	  i++;
+      i++;
 
-  GPIO_PORTD_DATA_R &= 0xF7;		// Set E Low
+  GPIO_PORTD_DATA_R &= 0xF7;        // Set E Low
 
   for( i=0; i<1000; i )
-	  i++;
+      i++;
 }
 
 void wr_ctrl_LCD_high( INT8U Ch )
@@ -155,25 +153,25 @@ void out_LCD_low( INT8U Ch )
 /*****************************************************************************
 *   Input    : Mask
 *   Output   : -
-*   Function : Send low part of character to LCD. 
+*   Function : Send low part of character to LCD.
 *              This function works only in 4 bit data mode.
 ******************************************************************************/
 {
   INT8U temp;
-	  
+
   temp = GPIO_PORTC_DATA_R & 0x0F;
   GPIO_PORTC_DATA_R  = temp | ((Ch & 0x0F) << 4);
   //GPIO_PORTD_DATA_R &= 0x7F;        // Select write
   GPIO_PORTD_DATA_R |= 0x04;        // Select data mode
-  GPIO_PORTD_DATA_R |= 0x08;		// Set E High
-  GPIO_PORTD_DATA_R &= 0xF7;		// Set E Low
+  GPIO_PORTD_DATA_R |= 0x08;        // Set E High
+  GPIO_PORTD_DATA_R &= 0xF7;        // Set E Low
 }
 
 void out_LCD_high( INT8U Ch )
 /*****************************************************************************
 *   Input    : Mask
 *   Output   : -
-*   Function : Send high part of character to LCD. 
+*   Function : Send high part of character to LCD.
 *              This function works only in 4 bit data mode.
 ******************************************************************************/
 {
@@ -193,13 +191,13 @@ void wr_ctrl_LCD( INT8U Ch )
   wr_ctrl_LCD_high( Ch );
   if( Mode4bit )
   {
-	for(i=0; i<1000; i++);
-	wr_ctrl_LCD_low( Ch );
+    for(i=0; i<1000; i++);
+    wr_ctrl_LCD_low( Ch );
   }
   else
   {
-	if( (Ch & 0x30) == 0x20 )
-	  Mode4bit = TRUE;
+    if( (Ch & 0x30) == 0x20 )
+      Mode4bit = TRUE;
   }
 }
 
@@ -249,7 +247,7 @@ void out_LCD( INT8U Ch )
 
 void lcd_init()
 /*****************************************************************************
-*   Input    : -  
+*   Input    : -
 *   Output   : -
 *   Function : Initialize LCD.
 ******************************************************************************/
@@ -258,17 +256,17 @@ void lcd_init()
     {
       wr_ctrl_LCD( LCD_init_sequense[LCD_init++] );
     }
-  
+
     wait( 100 );
 }
 
 void lcd_task(void *pvParameters)
 /*****************************************************************************
-*   Input    : 
-*   Output   : 
-*   Function : 
+*   Input    :
+*   Output   :
+*   Function :
 ******************************************************************************/
-{ 
+{
   lcd_msg_t event;
   lcd_init();
 
@@ -291,7 +289,7 @@ void lcd_task(void *pvParameters)
           wr_str_LCD("3:F");
           break;
         }
-          
+
         case LCD_DISPLAY_CASH_OR_CARD :
         {
           lcd_clear();
@@ -338,10 +336,10 @@ void lcd_task(void *pvParameters)
           lcd_home();
           wr_str_LCD("Dispensing...");
           break;
-        
+
         case LCD_DISPLAY_CHOICE_PRODUCED :
           lcd_clear();
-          lcd_home(); 
+          lcd_home();
           wr_str_LCD("Remove");
           move_LCD(6,0);
           wr_str_LCD("coffee");

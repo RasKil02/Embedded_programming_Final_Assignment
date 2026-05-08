@@ -34,8 +34,6 @@
 #include "queue.h"
 #include "semphr.h"
 #include "emp_type.h"
-//#include "glob_def.h"
-//#include "binary.h"
 
 // Own includes
 #include "LED_task.h"
@@ -46,7 +44,7 @@ using namespace std;
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN 128
 
-extern QueueHandle_t change_q; 
+extern QueueHandle_t change_q;
 extern QueueHandle_t purchased_products_q;
 extern QueueHandle_t time_q;
 

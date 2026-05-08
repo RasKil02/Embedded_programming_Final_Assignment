@@ -8,7 +8,6 @@
 #include "emp_type.h"
 #include "task.h"
 #include "systick_frt.h"
-#include "adc.h"
 
 #include <stdint.h>
 
