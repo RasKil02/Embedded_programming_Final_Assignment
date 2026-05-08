@@ -38,8 +38,6 @@
 // Own includes
 #include "LED_task.h"
 
-using namespace std;
-
 
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN 128

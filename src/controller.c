@@ -36,18 +36,25 @@
 
 // Own includes
 #include "controller.h"
-#include "LED.task.h"
+#include "LED_task.h"
 #include "Keypad.h"
 #include "lcd.h"
 #include "encoder.h"
 #include "uart.h"
 
-// data types
-#include <vector>
-
-using namespace std;
+// Data stype
+#include <string.h>
 
 /*****************************    Defines    *******************************/
+
+extern QueueHandle_t key_queue;
+extern QueueHandle_t uart_queue_handler;
+extern QueueHandle_t encoder_queue;
+extern QueueHandle_t lcd_queue;
+extern QueueHandle_t change_q;
+extern QueueHandle_t purchased_products_q;
+extern QueueHandle_t time_q;
+
 typedef enum {
     C_IDLE,
     C_PAYMENT,
@@ -60,13 +67,29 @@ typedef enum {
 } controller_state_t;
 
 typedef struct {
-    string coffee_type;
+    Char coffee_type[50];
     int price;
     int amount;
     int time_of_day;
     int payment_type;
     int card_number;
 } uart_product_t;
+
+typedef struct {
+    lcd_states cmd;
+    int value;
+} lcd_msg_t;
+
+typedef enum
+{
+  LCD_IDLE,
+  LCD_DISPLAY_CASH_OR_CARD,
+  LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
+  LCD_RETURN_CASH,
+  LCD_DISPLAY_CHOICE,
+  LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
+  LCD_DISPLAY_CHOICE_PRODUCED,
+} lcd_states;
 
 /*****************************   Constants   *******************************/
 #define INITIAL_BREWING_RATE  0.6       // price pr. cl
@@ -235,7 +258,7 @@ void controller_task(void *pvParameters)
             {
                 if (uart_product.price == espresso)
                 {
-                    uart_product.coffe_type = "Espresso";
+                    strcpy(uart_product.coffe_type, "Espresso");
                     uart_product.amount = STANDARD_COFFEE_AMOUNT;
                     uart_product.price = price;
                     uart_product.time_of_day = 0;
@@ -243,7 +266,7 @@ void controller_task(void *pvParameters)
                 }
                 else if (uart_product.price == latte)
                 {
-                    uart_product.coffe_type = "Latte";
+                    strcpy(uart_product.coffe_type, "Latte");
                     uart_product.amount = STANDARD_COFFEE_AMOUNT;
                     uart_product.price = price;
                     uart_product.time_of_day = 0;
@@ -251,7 +274,7 @@ void controller_task(void *pvParameters)
                 }
                 else if (uart_product.price == filter)
                 {
-                    uart_product.coffe_type = "Filter";
+                    strcpy(uart_product.coffe_type, "Filter");
                     xQueueReceive(time_q, &time_spent_brewing, 0); // Receive time of day from LED task
 
                     if (time_spent_brewing < INITIAL_BREWING_TIME_MS)

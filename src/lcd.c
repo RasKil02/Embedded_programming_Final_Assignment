@@ -22,11 +22,13 @@
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 #include "emp_type.h"
+#include "systick_frt.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 
 // Own includes
 #include "lcd.h"
-
-using namespace std;
 
 
 /*****************************    Defines    *******************************/
@@ -82,7 +84,7 @@ INT8U wr_ch_LCD( INT8U Ch )
 *   Function : See module specification (.h-file).
 *****************************************************************************/
 {
-  return( put_queue( Q_LCD, Ch, WAIT_FOREVER ));
+  return( xQueueSend( Q_LCD, &Ch, WAIT_FOR_EVER ) );
 }
 
 void wr_str_LCD( INT8U *pStr )

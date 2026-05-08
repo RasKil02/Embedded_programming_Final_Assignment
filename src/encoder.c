@@ -28,8 +28,6 @@
 // Own includes
 #include "encoder.h"
 
-using namespace std;
-
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN 128
 
