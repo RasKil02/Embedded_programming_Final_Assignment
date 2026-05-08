@@ -34,8 +34,7 @@
 /*****************************   Constants   *******************************/
 
 /*****************************   Functions   *******************************/
-void controller_task(void *pvParameters );
-
+void controller_task(void *pvParameters);
 
 /****************************** End Of Module *******************************/
 

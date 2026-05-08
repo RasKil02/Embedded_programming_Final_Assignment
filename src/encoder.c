@@ -28,6 +28,7 @@
 // Own includes
 #include "encoder.h"
 
+
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN 128
 

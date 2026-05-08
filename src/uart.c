@@ -30,6 +30,7 @@
 // Own includes
 #include "uart.h"
 
+
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN 128
 

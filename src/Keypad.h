@@ -21,7 +21,7 @@
   #define _KEY_H
 
 BOOLEAN get_keyboard( INT8U* );
-extern void key_task( void *pvParameters );
+extern void key_task(void *pvParameters);
 
 
 #endif

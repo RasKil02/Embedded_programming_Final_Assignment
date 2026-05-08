@@ -15,7 +15,7 @@
 #include "Keypad.h"
 #include "controller.h"
 #include "lcd.h"
-#include "encoder.c"
+#include "encoder.h"
 #include "uart.h"
 
 /***************************    Defines     **********************************/
@@ -33,6 +33,30 @@ QueueHandle_t change_q;
 QueueHandle_t purchased_products_q;
 QueueHandle_t time_q;
 
+typedef enum
+{
+  LCD_IDLE,
+  LCD_DISPLAY_CASH_OR_CARD,
+  LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
+  LCD_RETURN_CASH,
+  LCD_DISPLAY_CHOICE,
+  LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
+  LCD_DISPLAY_CHOICE_PRODUCED,
+} lcd_states;
+
+typedef struct {
+    lcd_states cmd;
+    int value;
+} lcd_msg_t;
+
+typedef enum {
+    NO_PRODUCT = 0,
+    ESPRESSO,           // 1
+    LATTE,              // 2
+    FILTER              // 3, C has automatically assigned 1,2 and 3.
+} product_t;
+
+
 /***************************    Functions     **********************************/
 static void setupHardware(void)
 /*****************************************************************************
@@ -45,8 +69,7 @@ static void setupHardware(void)
 
   // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
   init_systick();
-  status_led_init();
-  init_adc();
+  LED_init();
 }
 
 int main(void)

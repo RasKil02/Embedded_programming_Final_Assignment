@@ -36,6 +36,9 @@
 
 extern QueueHandle_t lcd_queue;
 
+#define FALSE 0
+#define TRUE 1
+
 typedef enum
 {
   LCD_IDLE,
@@ -77,39 +80,15 @@ INT8U LCD_init;
 
 
 
-/*****************************   Functions   *******************************/
-INT8U wr_ch_LCD( INT8U Ch )
+void move_LCD(INT8U x, INT8U y)
 /*****************************************************************************
-*   OBSERVE  : LCD_PROC NEEDS 20 mS TO PRINT OUT ONE CHARACTER
-*   Function : See module specification (.h-file).
-*****************************************************************************/
+*   Input    : -
+*   Output   : -
+*   Function : -
+******************************************************************************/
 {
-  return( xQueueSend( Q_LCD, &Ch, 0 ));
-}
-
-void wr_str_LCD( INT8U *pStr )
-/*****************************************************************************
-*   Function : See module specification (.h-file).
-*****************************************************************************/
-{
-  while( *pStr )
-  {
-    wr_ch_LCD( *pStr );
-    pStr++;
-  }
-}
-
-void move_LCD( INT8U x, INT8U y )
-/*****************************************************************************
-*   Function : See module specification (.h-file).
-*****************************************************************************/
-{
-  INT8U Pos;
-
-  Pos = y*0x40 + x;
-  Pos |= 0x80;
-  wr_ch_LCD( ESC );
-  wr_ch_LCD( Pos );
+    INT8U pos = (y == 0) ? (0x80 + x) : (0x80 + 0x40 + x);
+    wr_ctrl_LCD(pos);
 }
 
 void wr_ctrl_LCD_low( INT8U Ch )
@@ -259,7 +238,7 @@ void lcd_init()
       wr_ctrl_LCD( LCD_init_sequense[LCD_init++] );
     }
 
-    wait( 100 );
+  vTaskDelay(100 / portTICK_RATE_MS);;
 }
 
 void lcd_print(char *str)
@@ -289,8 +268,8 @@ void lcd_task(void *pvParameters)
       {
         case LCD_IDLE :
         {
-            lcd_clear();
-            lcd_home();
+            clr_LCD();
+            home_LCD();
             lcd_print("Choose coffee:");
             lcd_print("1:E");
             move_LCD(5,1);
@@ -302,8 +281,8 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_CASH_OR_CARD :
         {
-            lcd_clear();
-            lcd_home();
+            clr_LCD();
+            home_LCD();
             lcd_print("Pay with:");
             move_LCD(0,1);
             lcd_print("1:Cash");
@@ -314,8 +293,8 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_CHOICE :
         {
-            lcd_clear();
-            lcd_home();
+            clr_LCD();
+            home_LCD();
             lcd_print("You chose:");
             move_LCD(0,1);
             int choice = event.value; // 1, 2 or 3
@@ -337,8 +316,8 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN :
         {
-            lcd_clear();
-            lcd_home();
+            clr_LCD();
+            home_LCD();
             lcd_print("Enter card number:");
             break;
         }
@@ -346,8 +325,8 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED :
         {
-            lcd_clear();
-            lcd_home();
+            clr_LCD();
+            home_LCD();
             lcd_print("Dispensing...");
             break;
         }
@@ -355,8 +334,8 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_CHOICE_PRODUCED :
         {
-            lcd_clear();
-            lcd_home();
+            clr_LCD();
+            home_LCD();
             lcd_print("Remove");
             move_LCD(6,0);
             lcd_print("coffee");
@@ -366,8 +345,8 @@ void lcd_task(void *pvParameters)
 
         case LCD_RETURN_CASH :
         {
-            lcd_clear();
-            lcd_home();
+            clr_LCD();
+            home_LCD();
             lcd_print("Returning");
             move_LCD(0,1);
             lcd_print("change");

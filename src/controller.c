@@ -42,11 +42,10 @@
 #include "encoder.h"
 #include "uart.h"
 
-// Data stype
+// Data type
 #include <string.h>
 
 /*****************************    Defines    *******************************/
-
 extern QueueHandle_t key_queue;
 extern QueueHandle_t uart_queue_handler;
 extern QueueHandle_t encoder_queue;
@@ -67,18 +66,13 @@ typedef enum {
 } controller_state_t;
 
 typedef struct {
-    Char coffee_type[50];
+    char coffee_type[50];
     int price;
     int amount;
     int time_of_day;
     int payment_type;
     int card_number;
 } uart_product_t;
-
-typedef struct {
-    lcd_states cmd;
-    int value;
-} lcd_msg_t;
 
 typedef enum
 {
@@ -90,6 +84,11 @@ typedef enum
   LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
   LCD_DISPLAY_CHOICE_PRODUCED,
 } lcd_states;
+
+typedef struct {
+    lcd_states cmd;
+    int value;
+} lcd_msg_t;
 
 /*****************************   Constants   *******************************/
 #define INITIAL_BREWING_RATE  0.6       // price pr. cl
@@ -258,7 +257,7 @@ void controller_task(void *pvParameters)
             {
                 if (uart_product.price == espresso)
                 {
-                    strcpy(uart_product.coffe_type, "Espresso");
+                    strcpy(uart_product.coffee_type, "Espresso");
                     uart_product.amount = STANDARD_COFFEE_AMOUNT;
                     uart_product.price = price;
                     uart_product.time_of_day = 0;
@@ -266,7 +265,7 @@ void controller_task(void *pvParameters)
                 }
                 else if (uart_product.price == latte)
                 {
-                    strcpy(uart_product.coffe_type, "Latte");
+                    strcpy(uart_product.coffee_type, "Latte");
                     uart_product.amount = STANDARD_COFFEE_AMOUNT;
                     uart_product.price = price;
                     uart_product.time_of_day = 0;
@@ -274,7 +273,7 @@ void controller_task(void *pvParameters)
                 }
                 else if (uart_product.price == filter)
                 {
-                    strcpy(uart_product.coffe_type, "Filter");
+                    strcpy(uart_product.coffee_type, "Filter");
                     xQueueReceive(time_q, &time_spent_brewing, 0); // Receive time of day from LED task
 
                     if (time_spent_brewing < INITIAL_BREWING_TIME_MS)
