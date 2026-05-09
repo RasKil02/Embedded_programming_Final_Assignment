@@ -59,6 +59,7 @@ typedef enum {
     C_PAYMENT,
     C_CHANGE_PRODUCT_PRICE,
     C_RECEIVING_CASH,
+    C_CHECK_CASH,
     C_RETURN_CASH,
     C_PRODUCE_CHOICE,
     C_LOG_PRODUCT_CHOICE,
@@ -74,10 +75,13 @@ typedef struct {
     int card_number;
 } uart_product_t;
 
-typedef enum
-{
+typedef enum {
   LCD_IDLE,
   LCD_DISPLAY_CASH_OR_CARD,
+  LCD_DISPLAY_CASH_AMOUNT,
+  LCD_DISPLAY_PAYMENT_ACCEPTED,
+  LCD_DISPLAY_PAYMENT_REJECTED,
+  LCD_DISPLAY_INSERT_CASH,
   LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
   LCD_RETURN_CASH,
   LCD_DISPLAY_CHOICE,
@@ -85,9 +89,10 @@ typedef enum
   LCD_DISPLAY_CHOICE_PRODUCED,
 } lcd_states;
 
+
 typedef struct {
     lcd_states cmd;
-    int value;
+    INT8U value;
 } lcd_msg_t;
 
 /*****************************   Constants   *******************************/
@@ -117,7 +122,7 @@ void controller_task(void *pvParameters)
     lcd_msg_t msg;
     uart_product_t uart_product;
     INT8U input;
-    INT8U data;
+    INT16S data;
     INT8U money;
     INT8U price;
     INT8U amount_coffee;
@@ -125,6 +130,11 @@ void controller_task(void *pvParameters)
     static INT8U change_price = 0;
     INT8U card_number;
     INT8U PIN;
+    INT8U product;
+    INT8U dummy = 0;
+    INT16S cash = 0;
+    INT8U encoder_value;
+    INT8U dummy4 = 0;
 
     while(1)
     {
@@ -132,16 +142,21 @@ void controller_task(void *pvParameters)
         {
             case C_IDLE :
             {
+                lcd_msg_t msg;
+                msg.cmd = LCD_IDLE;
+                msg.value = 0;
+                xQueueSend(lcd_queue, &msg, 0);   // Send message to LCD task to display idle screen
 
                 if (xQueueReceive(key_queue, &input, 0))
                 {
+                    product = input;
                     STATE = C_PAYMENT;
                 }
 
-                if (xQueueReceive(uart_queue_handler, &data, 0))
-                {
-                    STATE = C_CHANGE_PRODUCT_PRICE;
-                }
+                // if (xQueueReceive(uart_queue_handler, &data, 0))
+                // {
+                //     STATE = C_CHANGE_PRODUCT_PRICE;
+                // }
 
                 break;
             }
@@ -154,19 +169,32 @@ void controller_task(void *pvParameters)
 
             case C_PAYMENT :
             {
-                msg.cmd = LCD_DISPLAY_CHOICE;
-                msg.value = input;
-
-                xQueueSend(lcd_queue, &msg, 0);   // Send choice of coffee to LCD task
-
-                if (xQueueReceive(key_queue, &input, 0))
+                if (dummy == 0)
                 {
-                    if (input == '1')
+                    lcd_msg_t msg;
+                    msg.cmd = LCD_DISPLAY_CHOICE;
+                    msg.value = product;
+
+                    xQueueSend(lcd_queue, &msg, 1000 / portTICK_RATE_MS);   // Send choice of coffee to LCD task
+                    
+                    dummy++;
+                    vTaskDelay(2000 / portTICK_RATE_MS);    // wait for 2 seconds
+                }
+
+                msg.cmd = LCD_DISPLAY_CASH_OR_CARD;
+                msg.value = 0;
+
+                xQueueSend(lcd_queue, &msg, 0);   // Send payment options to LCD task
+
+
+                if (xQueueReceive(key_queue, &data, 10 / portTICK_RATE_MS))
+                {
+                    if (data == '1')
                     {
                         STATE = C_RECEIVING_CASH;
                     }
 
-                    if (input == '2')
+                    if (data == '2')
                     {
                         STATE = C_WAIT_FOR_CARD;
                     }
@@ -176,31 +204,65 @@ void controller_task(void *pvParameters)
 
             case C_RECEIVING_CASH :
             {
-                if (xQueueReceive(key_queue, &input, 0))
+                if (dummy4 == 0)
                 {
-                    if (input == '1')
+                    lcd_msg_t msg;
+                    msg.cmd = LCD_DISPLAY_INSERT_CASH;
+                    msg.value = product;
+                    xQueueSend(lcd_queue, &msg, 10 / portTICK_RATE_MS);   // Send message to LCD task to display cash amount
+                    
+                    if (product == '1')
                     {
                         price = espresso;
                     }
 
-                    if (input == '2')
+                    if (product == '2')
                     {
                         price = latte;
                     }
 
-                    if (input == '3')
+                    if (product == '3')
                     {
                         price = filter;
                     }
+                    dummy4 = 1;
                 }
 
-                if (xQueueReceive(encoder_queue, &money, 0))
+                if (xQueueReceive(encoder_queue, &encoder_value, pdMS_TO_TICKS(10)))
                 {
-                    if (money >= price)
-                    {
-                        change_price = money - price;
-                        STATE = C_RETURN_CASH;
-                    }
+                    cash = encoder_value;
+                    msg.cmd = LCD_DISPLAY_CASH_AMOUNT;
+                    msg.value = cash;
+                    xQueueSend(lcd_queue, &msg, 0);   // Send message to LCD task to display cash amount
+                }
+
+                if ((GPIO_PORTF_DATA_R & 0x10) == 0) // Check if button is pressed
+                {
+                    STATE = C_CHECK_CASH;
+                }
+
+                break;
+            }
+
+            case C_CHECK_CASH :
+            {
+                if (cash >= price)
+                {
+                    msg.cmd = LCD_DISPLAY_PAYMENT_ACCEPTED;
+                    msg.value = cash;
+                    xQueueSend(lcd_queue, &msg, 0);   // Send message to LCD task to display payment accepted
+
+                    vTaskDelay(2000 / portTICK_RATE_MS);    // wait for 2 seconds
+
+                    STATE = C_RETURN_CASH;
+                }
+                else
+                {
+                    lcd_msg_t msg;
+                    msg.cmd = LCD_DISPLAY_PAYMENT_REJECTED;
+                    msg.value = cash;
+                    xQueueSend(lcd_queue, &msg, 0);   // Send message to LCD task to display payment rejected
+                    STATE = C_RECEIVING_CASH;
                 }
                 break;
             }
@@ -211,17 +273,29 @@ void controller_task(void *pvParameters)
                 msg.value = change_price;
 
                 xQueueSend(lcd_queue, &msg, 0);
+
                 xQueueSend(change_q, &change_price, 0); // Send change to LED task
 
-                STATE = C_PRODUCE_CHOICE;
+                if (xQueueReceive(change_q, &change_price, 0))
+                {
+                    if (change_price == 0)
+                    {
+                        STATE = C_PRODUCE_CHOICE;
+                    }
+                }
 
                 break;
             }
 
             case C_PRODUCE_CHOICE :
             {
+                lcd_msg_t msg;
+                msg.cmd = LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED;
+                msg.value = 0;
+                xQueueSend(lcd_queue, &msg, 0);   // Send message to LCD task to display choice being produced
                 xQueueSend(purchased_products_q, &input, 0); // Send product choice to LED task
-                STATE = C_LOG_PRODUCT_CHOICE;
+                // STATE = C_LOG_PRODUCT_CHOICE;
+                STATE = C_IDLE; // For now, we just go back to idle after sending the product choice to the LED task. We can change this later if we want to log the product choice in the UART task.
                 break;
             }
 
