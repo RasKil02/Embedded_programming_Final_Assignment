@@ -170,6 +170,6 @@ extern void encoder_task( void *pvParameters )
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(2));
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }

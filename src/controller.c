@@ -184,33 +184,39 @@ void controller_task(void *pvParameters)
                 msg.value = user_choice;
 
                 xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+                
+                state = C_RETURNING_CASH;
+                GPIO_PORTF_DATA_R = 0x0b;
 
-                if (xQueueReceive(controller_queue, &change, pdMS_TO_TICKS(10))) 
-                {
-                    change_for_return = change;
-                    state = C_RETURNING_CASH;
-                }
                 break;
             }
             
             case C_RETURNING_CASH :
             {
-                msg.cmd = LCD_RETURN_CASH;
-                msg.value = 0;
-                xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
-                state = C_RETURN_CHANGE_LED;
+                if (xQueueReceive(controller_queue, &change, pdMS_TO_TICKS(100)))
+                {
+                    GPIO_PORTF_DATA_R = 0x0E;  
+                    GPIO_PORTF_DATA_R = 0x07;
+                    
+                    msg.cmd = LCD_RETURN_CASH;
+                    msg.value = 0;
+
+                    xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+                    //state = C_RETURN_CHANGE_LED;
+                }
+                
                 break;
             }
             
             case C_RETURN_CHANGE_LED : 
             {
-                xQueueSend(change_q, &change_for_return, 10 / portTICK_RATE_MS);
-                break;
+                //xQueueSend(change_q, &change, portMAX_DELAY);
+                //break;
             }
 
         }
 
-    vTaskDelay(10 / portTICK_RATE_MS);
+    vTaskDelay(pdMS_TO_TICKS(10));
 
     }
 

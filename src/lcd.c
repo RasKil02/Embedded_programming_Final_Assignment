@@ -303,6 +303,9 @@ void lcd_task(void *pvParameters)
   char cash_c[16];
   int choice;
   INT8U change = 0;
+  INT16S encoder_value;
+  INT8U last_button = 0;
+  INT8U price = 0;
 
   while(1)
   {
@@ -362,9 +365,7 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_CASH_AMOUNT :
         {
-            INT16S encoder_value;
-            INT8U last_button = 0;
-            INT8U price = 0;
+            INT8U done = 0;
 
             choice = event.value;
 
@@ -382,54 +383,60 @@ void lcd_task(void *pvParameters)
             clr_LCD();
             home_LCD();
 
-            while(1)
+            while(!done)
             {
-                // check button
+                // button pressed
                 if((GPIO_PORTF_DATA_R & 0x10) == 0)
                 {
-                    if(cash >= price)
+                    if((GPIO_PORTF_DATA_R & 0x10) == 0)
                     {
-                        clr_LCD();
-                        home_LCD();
+                        if(cash >= price)
+                        {
+                            clr_LCD();
+                            home_LCD();
 
-                        lcd_print("       paid");
+                            lcd_print("       paid");
 
-                        move_LCD(0,1);
+                            move_LCD(0,1);
 
-                        sprintf(cash_c, "%d DKK", cash);
-                        lcd_print(cash_c);
-                        vTaskDelay(pdMS_TO_TICKS(1000));
+                            sprintf(cash_c, "%d DKK", cash);
+                            lcd_print(cash_c);
 
-                        change = cash - price;
-                        xQueueSend(controller_queue, &change, 10 /portTICK_RATE_MS);
+                            change = cash - price;
 
-                        break;
-                    }
-                    if(cash < price)
-                    {
-                        clr_LCD();
-                        home_LCD();
+                            done = 1;
+                        }
+                        else
+                        {
+                            clr_LCD();
+                            home_LCD();
 
-                        lcd_print("       too low");
+                            lcd_print("     too low");
 
-                        sprintf(cash_c, "%d DKK", cash);
-                        lcd_print(cash_c);
+                            move_LCD(0,1);
+
+                            sprintf(cash_c, "%d DKK", cash);
+                            lcd_print(cash_c);
+                        }
                     }
                 }
-                // wait for encoder movement
+
+                // encoder update
                 if(xQueueReceive(encoder_queue,
-                                  &encoder_value,
-                                  pdMS_TO_TICKS(1)))
-                 {
-                     cash = encoder_value;
+                                &encoder_value,
+                                pdMS_TO_TICKS(1)))
+                {
+                    cash = encoder_value;
 
-                     clr_LCD();
-                     home_LCD();
+                    clr_LCD();
+                    home_LCD();
 
-                     sprintf(cash_c, "%d DKK", cash);
-                     lcd_print(cash_c);
-                 }
+                    sprintf(cash_c, "%d DKK", cash);
+                    lcd_print(cash_c);
+                }
             }
+            
+            xQueueSend(controller_queue, &change, 10 / portTICK_RATE_MS);
 
             break;
         }
@@ -468,7 +475,7 @@ void lcd_task(void *pvParameters)
             break;
         }
       }
-      vTaskDelay(10 / portTICK_RATE_MS);
+      vTaskDelay(1 / portTICK_RATE_MS);
     }
   }
 }
