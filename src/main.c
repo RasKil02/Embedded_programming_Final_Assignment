@@ -33,7 +33,8 @@ QueueHandle_t change_q;
 QueueHandle_t purchased_products_q;
 QueueHandle_t time_q;
 QueueHandle_t encoder_button_queue;
-QueueHandle_t controller_queue;y
+QueueHandle_t controller_queue;
+QueueHandle_t led_to_controller_q;
 
 typedef enum
 { 
@@ -46,6 +47,7 @@ typedef enum
     LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
     LCD_DISPLAY_CHOICE_PRODUCED,
     LCD_RETURN_CASH,
+    LCD_PLACE_CUP,
 } lcd_states;
 
 typedef struct {
@@ -81,6 +83,12 @@ void init_gpio(void)
 
   // Do a dummy read to insert a few cycles after enabling the peripheral.
   dummy = SYSCTL_RCGC2_R;
+
+  // Unlock the GPIO Pin which enables write access to the GPIO
+  GPIO_PORTF_LOCK_R=0x4C4F434B;
+
+  // Commit register (GPIOAFSEL, GPIOPUR, GPIOPDR, GPIODEN)
+  GPIO_PORTF_CR_R=0xFF;
 
   // Set the direction as output (PF1, PF2 and PF3).
   GPIO_PORTA_DIR_R = 0x1C;
@@ -137,12 +145,13 @@ int main(void)
     // FINISHED:
     lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) );
-    change_q = xQueueCreate(10, sizeof(int));
+    change_q = xQueueCreate(10, sizeof(INT8U));
     purchased_products_q = xQueueCreate(10, sizeof(product_msg_t));
     time_q = xQueueCreate(10, sizeof(int));
     encoder_queue = xQueueCreate( 10, sizeof( INT16S ) );
     encoder_button_queue = xQueueCreate( 10, sizeof( INT8U ) );
     controller_queue = xQueueCreate(10, sizeof( INT8U ));
+    led_to_controller_q = xQueueCreate(10, sizeof( INT8U ));
 
     // xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     // xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );

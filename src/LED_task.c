@@ -51,6 +51,7 @@
 extern QueueHandle_t change_q;
 extern QueueHandle_t purchased_products_q;
 extern QueueHandle_t time_q;
+extern QueueHandle_t led_to_controller_q;
 
 
 typedef enum {
@@ -153,7 +154,7 @@ void turn_off_led(void)
 
 INT8U button_pushed()
 {
-    return (GPIO_PORTF_DATA_R & 0x10) >> 4; // Returns 1 if button is pushed, 0 if not
+    return (GPIO_PORTF_DATA_R & 0x01) >> 4; // Returns 1 if button is pushed, 0 if not
 }
 
 
@@ -179,6 +180,8 @@ void LED_task(void *pvParameters)
     static int time_left_brew = 0;
     static int time_left_froth = 0;
     float rate = 0.6f; // cl/s
+
+    INT8U message_for_controller;
 
     while(1)
     {
@@ -280,8 +283,10 @@ void LED_task(void *pvParameters)
                 if (prepaid_amount <= 0.0f)
                 {
                     turn_off_led();
+                    message_for_controller = 1;
+                    xQueueSend(led_to_controller_q, &message_for_controller, pdMS_TO_TICKS(10));
                     STATE = IDLE;
-                    xQueueSend(time_q, &time, 0); // Send time to controller task for logging
+                    // xQueueSend(time_q, &time, 0); // Send time to controller task for logging
                     time = 0;
                     time_inactive = 0;
                 }
@@ -289,8 +294,10 @@ void LED_task(void *pvParameters)
                 if (time_inactive > 5000)
                 {
                     turn_off_led();
+                    message_for_controller = 1;
+                    xQueueSend(led_to_controller_q, &message_for_controller, pdMS_TO_TICKS(10));
                     STATE = IDLE;
-                    xQueueSend(time_q, &time, 0); // Send time to controller task for logging
+                    // xQueueSend(time_q, &time, 0); // Send time to controller task for logging
                     time = 0;
                     time_inactive = 0;
                 }
@@ -321,6 +328,8 @@ void LED_task(void *pvParameters)
 
                     if (product_msg.product == ESPRESSO)
                     {
+                        message_for_controller = 1;
+                        xQueueSend(led_to_controller_q, &message_for_controller, pdMS_TO_TICKS(10));
                         STATE = IDLE;
                     }
                     else if (product_msg.product == LATTE)
@@ -348,6 +357,8 @@ void LED_task(void *pvParameters)
                 {
                     turn_off_led();
                     time_left_froth = 0;
+                    message_for_controller = 1;
+                    xQueueSend(led_to_controller_q, &message_for_controller, pdMS_TO_TICKS(10));
                     STATE = IDLE;
                 }
 
@@ -365,7 +376,3 @@ void LED_task(void *pvParameters)
 
 
 /****************************** End Of Module *******************************/
-
-
-
-

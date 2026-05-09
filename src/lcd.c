@@ -55,6 +55,7 @@ typedef enum
     LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
     LCD_DISPLAY_CHOICE_PRODUCED,
     LCD_RETURN_CASH,
+    LCD_PLACE_CUP,
 } lcd_states;
 
 
@@ -309,7 +310,7 @@ void lcd_task(void *pvParameters)
 
   while(1)
   {
-    if(xQueueReceive(lcd_queue, &event, portMAX_DELAY))
+    if(xQueueReceive(lcd_queue, &event, pdMS_TO_TICKS(10)))
     {
       switch(event.cmd)
       {
@@ -386,9 +387,9 @@ void lcd_task(void *pvParameters)
             while(!done)
             {
                 // button pressed
-                if((GPIO_PORTF_DATA_R & 0x10) == 0)
+                if((GPIO_PORTF_DATA_R & 0x01) == 0)
                 {
-                    if((GPIO_PORTF_DATA_R & 0x10) == 0)
+                    if((GPIO_PORTF_DATA_R & 0x01) == 0)
                     {
                         if(cash >= price)
                         {
@@ -403,6 +404,7 @@ void lcd_task(void *pvParameters)
                             lcd_print(cash_c);
 
                             change = cash - price;
+                            xQueueSend(controller_queue, &change, 10 / portTICK_RATE_MS);
 
                             done = 1;
                         }
@@ -435,8 +437,8 @@ void lcd_task(void *pvParameters)
                     lcd_print(cash_c);
                 }
             }
-            
-            xQueueSend(controller_queue, &change, 10 / portTICK_RATE_MS);
+
+            clr_LCD();
 
             break;
         }
@@ -458,12 +460,11 @@ void lcd_task(void *pvParameters)
             break;
         }
 
-
         case LCD_DISPLAY_CHOICE_PRODUCED :
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Remove coffee");
+            lcd_print("Remove coffee           (SW1)");
             break;
         }
 
@@ -473,6 +474,13 @@ void lcd_task(void *pvParameters)
             home_LCD();
             lcd_print("Returning       change...");
             break;
+        }
+
+        case LCD_PLACE_CUP :
+        {
+            clr_LCD();
+            home_LCD();
+            lcd_print("Please place cup      (SW1)");
         }
       }
       vTaskDelay(1 / portTICK_RATE_MS);
