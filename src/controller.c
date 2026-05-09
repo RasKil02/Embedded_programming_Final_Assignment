@@ -53,8 +53,16 @@ extern QueueHandle_t lcd_queue;
 extern QueueHandle_t change_q;
 extern QueueHandle_t purchased_products_q;
 extern QueueHandle_t time_q;
+extern QueueHandle_t controller_queue;
 
 typedef enum {
+    PROGRAM_START,
+    C_IDLE,
+    C_DISPLAY_PAYMENT_OPTIONS,
+    C_DETERMINE_PAYMENT_METHOD,
+    C_DISPLAY_AMOUNT_INSERTED,
+    C_RETURNING_CASH,
+    C_RETURN_CHANGE_LED,
 } controller_state_t;
 
 typedef struct {
@@ -67,14 +75,16 @@ typedef struct {
 } uart_product_t;
 
 typedef enum
-{
-  LCD_IDLE,
-  LCD_DISPLAY_CASH_OR_CARD,
-  LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
-  LCD_RETURN_CASH,
-  LCD_DISPLAY_CHOICE,
-  LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
-  LCD_DISPLAY_CHOICE_PRODUCED,
+{ 
+    LCD_IDLE,
+    LCD_DISPLAY_CASH_OR_CARD,
+    LCD_DISPLAY_CHOICE,
+    LCD_DISPLAY_ENTER_CASH_INFO,
+    LCD_DISPLAY_CASH_AMOUNT,
+    LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
+    LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
+    LCD_DISPLAY_CHOICE_PRODUCED,
+    LCD_RETURN_CASH,
 } lcd_states;
 
 typedef struct {
@@ -95,3 +105,113 @@ const INT8U espresso = 15;
 const INT8U latte = 27;
 const INT8U filter = 3;
 
+void controller_task(void *pvParameters)
+{
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    lcd_msg_t msg;
+    controller_state_t state;
+
+    INT8U user_choice;
+    INT8U change;
+    INT8U change_for_return = 0;
+
+    // Initial state
+    state = PROGRAM_START;
+
+    while(1)
+    {
+        switch(state)
+        {   case PROGRAM_START:
+            {
+                // Display welcome message and ask user to choose coffee
+                msg.cmd = LCD_IDLE;
+                msg.value = 0;
+                xQueueSend(lcd_queue, &msg, portMAX_DELAY);
+                state = C_IDLE;
+                break;
+            }
+            
+            case C_IDLE:
+            {
+                if (xQueueReceive(key_queue, &user_choice, 10 / portTICK_PERIOD_MS))
+                {
+                    msg.cmd = LCD_DISPLAY_CHOICE;
+                    msg.value = user_choice;
+                    xQueueSend(lcd_queue, &msg, portMAX_DELAY);
+                    
+                    vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+                    state = C_DISPLAY_PAYMENT_OPTIONS;
+                }
+                // Wait for user input
+                break;
+            }
+
+            case C_DISPLAY_PAYMENT_OPTIONS :
+            {
+                msg.cmd = LCD_DISPLAY_CASH_OR_CARD;
+                msg.value = 0;
+                xQueueSend(lcd_queue, &msg, portMAX_DELAY);
+
+                state = C_DETERMINE_PAYMENT_METHOD;
+                break;
+            }
+
+            case C_DETERMINE_PAYMENT_METHOD :
+            {
+                if (xQueueReceive(key_queue, &user_choice, 10 / portTICK_PERIOD_MS))
+                {
+                    if (user_choice == '1') // Cash
+                    {
+                        msg.cmd = LCD_DISPLAY_ENTER_CASH_INFO;
+                        msg.value = 0;
+                        xQueueSend(lcd_queue, &msg, portMAX_DELAY);
+                        vTaskDelay(2000 / portTICK_PERIOD_MS);
+                        state = C_DISPLAY_AMOUNT_INSERTED;
+                    }
+                    else if (user_choice == '2') // Card
+                    {
+                        // handle later
+                    }
+                }
+                break;
+            }
+
+            case C_DISPLAY_AMOUNT_INSERTED :
+            {
+                msg.cmd = LCD_DISPLAY_CASH_AMOUNT;
+                msg.value = user_choice;
+
+                xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+
+                if (xQueueReceive(controller_queue, &change, pdMS_TO_TICKS(10))) 
+                {
+                    change_for_return = change;
+                    state = C_RETURNING_CASH;
+                }
+                break;
+            }
+            
+            case C_RETURNING_CASH :
+            {
+                msg.cmd = LCD_RETURN_CASH;
+                msg.value = 0;
+                xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+                state = C_RETURN_CHANGE_LED;
+                break;
+            }
+            
+            case C_RETURN_CHANGE_LED : 
+            {
+                xQueueSend(change_q, &change_for_return, 10 / portTICK_RATE_MS);
+                break;
+            }
+
+        }
+
+    vTaskDelay(10 / portTICK_RATE_MS);
+
+    }
+
+}

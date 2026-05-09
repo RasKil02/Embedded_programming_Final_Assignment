@@ -38,20 +38,25 @@
 extern QueueHandle_t lcd_queue;
 extern QueueHandle_t encoder_queue;
 extern QueueHandle_t encoder_button_queue;
+extern QueueHandle_t change_q;
+extern QueueHandle_t controller_queue;
 
 #define FALSE 0
 #define TRUE 1
 
-typedef enum {
-  LCD_IDLE,
-  LCD_DISPLAY_CASH_OR_CARD,
-  LCD_DISPLAY_CASH_AMOUNT,
-  LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
-  LCD_RETURN_CASH,
-  LCD_DISPLAY_CHOICE,
-  LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
-  LCD_DISPLAY_CHOICE_PRODUCED,
+typedef enum
+{ 
+    LCD_IDLE,
+    LCD_DISPLAY_CASH_OR_CARD,
+    LCD_DISPLAY_CHOICE,
+    LCD_DISPLAY_ENTER_CASH_INFO,
+    LCD_DISPLAY_CASH_AMOUNT,
+    LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
+    LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED,
+    LCD_DISPLAY_CHOICE_PRODUCED,
+    LCD_RETURN_CASH,
 } lcd_states;
+
 
 typedef struct {
     lcd_states cmd;
@@ -297,6 +302,7 @@ void lcd_task(void *pvParameters)
   int cash = 0;
   char cash_c[16];
   int choice;
+  INT8U change = 0;
 
   while(1)
   {
@@ -327,22 +333,32 @@ void lcd_task(void *pvParameters)
 
             choice = event.value; // 1, 2 or 3
 
-            if (choice == 1)
+            if (choice == '1')
             {
                 lcd_print("You chose:      E15DKK");
 
             }
-            else if (choice == 2)
+            else if (choice == '2')
             {
                 lcd_print("You chose:      L27DKK");
             }
-            else if (choice == 3)
+            else if (choice == '3')
             {
                 lcd_print("You chose:      F3DKKCL");
             }
 
             break;
         }
+
+        case LCD_DISPLAY_ENTER_CASH_INFO :
+        {
+            clr_LCD();
+            home_LCD();
+
+            lcd_print("Use encoder to  insert cash");
+            break;
+        }
+
 
         case LCD_DISPLAY_CASH_AMOUNT :
         {
@@ -352,13 +368,13 @@ void lcd_task(void *pvParameters)
 
             choice = event.value;
 
-            if(choice == 1)
+            if(choice == '1')
                 price = 15;
 
-            if(choice == 2)
+            if(choice == '2')
                 price = 27;
 
-            if(choice == 3)
+            if(choice == '3')
                 price = 3;
 
             cash = 0;
@@ -383,6 +399,9 @@ void lcd_task(void *pvParameters)
                         sprintf(cash_c, "%d DKK", cash);
                         lcd_print(cash_c);
                         vTaskDelay(pdMS_TO_TICKS(1000));
+
+                        change = cash - price;
+                        xQueueSend(controller_queue, &change, 10 /portTICK_RATE_MS);
 
                         break;
                     }

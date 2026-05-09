@@ -173,8 +173,8 @@ void LED_task(void *pvParameters)
     int time_inactive = 0;
     float prepaid_amount = 0.0f; // Placeholder
     product_msg_t product_msg;
-    static int change_value = 0;
-    static int change = 0;
+    INT8U change_value = 0;
+    INT8U change = 0;
     static int time_left_grind = 0;
     static int time_left_brew = 0;
     static int time_left_froth = 0;
@@ -214,7 +214,6 @@ void LED_task(void *pvParameters)
 
             case RETURN_CASH:
             {
-
                 if (change_value > 0)
                 {
                     blink_green_led();
