@@ -156,6 +156,7 @@ INT8U button_pushed()
     return (GPIO_PORTF_DATA_R & 0x10) >> 4; // Returns 1 if button is pushed, 0 if not
 }
 
+
 void LED_task(void *pvParameters)
 /*****************************************************************************
 *   Input    :  -
@@ -223,7 +224,6 @@ void LED_task(void *pvParameters)
                 else
                 {
                     change_value = 0;
-                    xQueueSend(change_q, &change_value, 0); // Send updated change value back to controller task
                     STATE = IDLE;
                 }
 

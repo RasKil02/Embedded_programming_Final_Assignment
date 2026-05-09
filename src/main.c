@@ -48,7 +48,7 @@ typedef enum
 
 typedef struct {
     lcd_states cmd;
-    INT8U value;
+    int value;
 } lcd_msg_t;
 
 typedef enum {
@@ -104,10 +104,26 @@ static void setupHardware(void)
 *   Function :
 *****************************************************************************/
 {
+  // TODO: Put hardware configuration and initialisation in here
+
+  // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
   init_systick();
-  LED_init();
+  // LED_init();
   init_gpio();
   Encoder_init();
+}
+
+void test_task(void *pvParameters)
+{
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
+    lcd_msg_t msg;
+    msg.cmd = LCD_DISPLAY_CASH_AMOUNT;
+    msg.value = 1;
+
+    xQueueSend(lcd_queue, &msg, portMAX_DELAY);
+
+    vTaskDelete(NULL);
 }
 
 
@@ -116,9 +132,8 @@ int main(void)
     setupHardware();
 
     // uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
-    // xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    // xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
 
+    // FINISHED:
     lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) );
     change_q = xQueueCreate(10, sizeof(int));
@@ -127,11 +142,16 @@ int main(void)
     encoder_queue = xQueueCreate( 10, sizeof( INT16S ) );
     encoder_button_queue = xQueueCreate( 10, sizeof( INT8U ) );
 
+    // xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    // xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    // xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+
+    // FINISHED:
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( test_task, "test", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     vTaskStartScheduler();
     return 0;

@@ -46,9 +46,6 @@ typedef enum {
   LCD_IDLE,
   LCD_DISPLAY_CASH_OR_CARD,
   LCD_DISPLAY_CASH_AMOUNT,
-  LCD_DISPLAY_PAYMENT_ACCEPTED,
-  LCD_DISPLAY_PAYMENT_REJECTED,
-  LCD_DISPLAY_INSERT_CASH,
   LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN,
   LCD_RETURN_CASH,
   LCD_DISPLAY_CHOICE,
@@ -58,7 +55,7 @@ typedef enum {
 
 typedef struct {
     lcd_states cmd;
-    INT8U value;
+    int value;
 } lcd_msg_t;
 
 /*****************************   Constants   *******************************/
@@ -266,6 +263,28 @@ void lcd_print(char *str)
     }
 }
 
+void slide_text(char *str)
+{
+    int offset = 0;
+    while (1)
+    {
+        clr_LCD();
+        home_LCD();
+
+        move_LCD(offset, 0);   // flyt startposition
+        lcd_print(str);        // print hele string
+
+        vTaskDelay(3000 / portTICK_RATE_MS);
+
+        offset++;
+
+        if (offset > 15)   // LCD bredde (typisk 16)
+        {
+            offset = 0;
+        }
+    }
+}
+
 void lcd_task(void *pvParameters)
 /*****************************************************************************
 *   Input    :
@@ -275,23 +294,19 @@ void lcd_task(void *pvParameters)
 {
   lcd_msg_t event;
   lcd_init();
-  INT8U cash = 0;
+  int cash = 0;
   char cash_c[16];
-  INT8U choice;
-  INT8U change;
-  clr_LCD();
-  INT8U last_entered = 0;
-  INT8U dummy2 = 0;
-  INT8U dummy3 = 0;
+  int choice;
 
   while(1)
   {
-    if(xQueueReceive(lcd_queue, &event, portMAX_DELAY)) 
+    if(xQueueReceive(lcd_queue, &event, portMAX_DELAY))
     {
       switch(event.cmd)
       {
         case LCD_IDLE :
         {
+            clr_LCD();
             home_LCD();
             lcd_print("Choose Coffee:  1: E 2: L 3: F");
             break;
@@ -299,14 +314,9 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_CASH_OR_CARD :
         {
-            if (last_entered == 0)
-            {
-                clr_LCD();
-            }
+            clr_LCD();
             home_LCD();
             lcd_print("Pay with:       1: Cash 2: Card"); // 15 char and then it switches lines
-            last_entered = 1;
-
             break;
         }
 
@@ -317,86 +327,91 @@ void lcd_task(void *pvParameters)
 
             choice = event.value; // 1, 2 or 3
 
-            if (choice == '1')
+            if (choice == 1)
             {
                 lcd_print("You chose:      E15DKK");
 
             }
-            else if (choice == '2')
+            else if (choice == 2)
             {
                 lcd_print("You chose:      L27DKK");
             }
-            else if (choice == '3')
+            else if (choice == 3)
             {
                 lcd_print("You chose:      F3DKKCL");
             }
 
-            vTaskDelay(2000 / portTICK_RATE_MS); // Wait for 2 seconds before showing payment options
-
-            //lcd_msg_t msg;
-            //msg.cmd = LCD_DISPLAY_CASH_OR_CARD;
-            //msg.value = 0;
-            //xQueueSend(lcd_queue, &msg, 0);   // Send payment options to LCD task
-
-            break;
-        }
-
-        case LCD_DISPLAY_PAYMENT_ACCEPTED :
-        {
-            clr_LCD();
-            home_LCD();
-
-            lcd_print("       paid");
-
-            move_LCD(0,1);
-
-            sprintf(cash_c, "%d DKK", event.value);
-            lcd_print(cash_c);
-        
-            break;
-        }
-
-        case LCD_DISPLAY_PAYMENT_REJECTED :
-        {
-            clr_LCD();
-            home_LCD();
-
-            lcd_print("       too low");
-
-            sprintf(cash_c, "%d DKK", event.value);
-            lcd_print(cash_c);
-            
-            break;
-        }
-
-        case LCD_DISPLAY_INSERT_CASH :
-        {
-            if (dummy2 == 0)
-            {
-                clr_LCD();
-                dummy2++;
-            }
-            home_LCD();
-
-            lcd_print("Insert cash:    using encoder");
             break;
         }
 
         case LCD_DISPLAY_CASH_AMOUNT :
         {
-            if (dummy3 == 0)
-            {
-                clr_LCD();
-                dummy3++;
-            }
+            INT16S encoder_value;
+            INT8U last_button = 0;
+            INT8U price = 0;
 
+            choice = event.value;
+
+            if(choice == 1)
+                price = 15;
+
+            if(choice == 2)
+                price = 27;
+
+            if(choice == 3)
+                price = 3;
+
+            cash = 0;
+
+            clr_LCD();
             home_LCD();
 
-            cash = event.value;
+            while(1)
+            {
+                // check button
+                if((GPIO_PORTF_DATA_R & 0x10) == 0)
+                {
+                    if(cash >= price)
+                    {
+                        clr_LCD();
+                        home_LCD();
 
-            sprintf(cash_c, "%d DKK", cash);
-            lcd_print(cash_c);
-            
+                        lcd_print("       paid");
+
+                        move_LCD(0,1);
+
+                        sprintf(cash_c, "%d DKK", cash);
+                        lcd_print(cash_c);
+                        vTaskDelay(pdMS_TO_TICKS(1000));
+
+                        break;
+                    }
+                    if(cash < price)
+                    {
+                        clr_LCD();
+                        home_LCD();
+
+                        lcd_print("       too low");
+
+                        sprintf(cash_c, "%d DKK", cash);
+                        lcd_print(cash_c);
+                    }
+                }
+                // wait for encoder movement
+                if(xQueueReceive(encoder_queue,
+                                  &encoder_value,
+                                  pdMS_TO_TICKS(1)))
+                 {
+                     cash = encoder_value;
+
+                     clr_LCD();
+                     home_LCD();
+
+                     sprintf(cash_c, "%d DKK", cash);
+                     lcd_print(cash_c);
+                 }
+            }
+
             break;
         }
 
@@ -434,7 +449,7 @@ void lcd_task(void *pvParameters)
             break;
         }
       }
-      vTaskDelay(10 / portTICK_RATE_MS); 
+      vTaskDelay(10 / portTICK_RATE_MS);
     }
   }
 }
