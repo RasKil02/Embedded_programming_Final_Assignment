@@ -44,6 +44,7 @@ extern QueueHandle_t encoder_button_queue;
 /*****************************   Constants   *******************************/
 
 /*****************************   Variables   *******************************/
+INT16S amount = 0;
 
 /*****************************   Functions   *******************************/
 
@@ -134,7 +135,6 @@ extern void encoder_task( void *pvParameters )
 {
     INT8U state = IDLE;
     INT8U lastA = Encoder_getA();
-    INT16S amount = 0;
 
     while( 1 )
     {

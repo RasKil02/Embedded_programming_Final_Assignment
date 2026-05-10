@@ -105,10 +105,10 @@ void blink_green_led(void)
 *****************************************************************************/
 {
     GPIO_PORTF_DATA_R = GREEN_LED;   // ON
-    vTaskDelay(200 / portTICK_RATE_MS);
+    vTaskDelay(500 / portTICK_RATE_MS);
 
     GPIO_PORTF_DATA_R = 0x0E;   // OFF
-    vTaskDelay(200 / portTICK_RATE_MS);
+    vTaskDelay(500 / portTICK_RATE_MS);
 }
 
 void turn_on_green_led(void)
@@ -197,7 +197,7 @@ void LED_task(void *pvParameters)
                 }
 
                 // Check product selection
-                if (xQueueReceive(purchased_products_q, &product_msg, 0))
+                if (xQueueReceive(purchased_products_q, &product_msg, pdMS_TO_TICKS(10)))
                 {
                     prepaid_amount = product_msg.prepaid_amount;
 

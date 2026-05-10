@@ -30,6 +30,7 @@
 // Own includes
 #include "controller.h"
 #include "lcd.h"
+#include "encoder.h"
 #include <stdio.h>
 
 /*****************************    Defines    *******************************/
@@ -445,6 +446,9 @@ void lcd_task(void *pvParameters)
                         change = cash - price;
 
                         xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
+                        xQueueReset(encoder_queue);
+                        dummy = 0;
+                        amount = 0;
                         BUTTON_PRESSED = 1;
                     }
                     else
@@ -515,8 +519,7 @@ void lcd_task(void *pvParameters)
                 clr_LCD();
                 home_LCD();
                 lcd_print("Returning       change...");
-                change = 10;
-                xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
+                vTaskDelay(pdMS_TO_TICKS(1000));
                 break;
             }
 

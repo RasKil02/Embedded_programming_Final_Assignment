@@ -339,7 +339,6 @@ void controller_task(void *pvParameters)
 
                 if (xQueueReceive(controller_queue, &change, portMAX_DELAY))
                 {
-                    // We get to here, but it never changes state to C_RETURN_CHANGE_LED
                     change_for_return = change;
                     state = C_RETURNING_CASH;
                 }
@@ -361,7 +360,7 @@ void controller_task(void *pvParameters)
 
             case C_RETURN_CHANGE_LED :
             {
-                xQueueSend(change_q, &change, pdMS_TO_TICKS(10));
+                xQueueSend(change_q, &change_for_return, pdMS_TO_TICKS(10));
                 state = C_SEND_WAIT_FOR_CUP;
                 break;
             }
@@ -484,11 +483,8 @@ void controller_task(void *pvParameters)
             {
                 if ((GPIO_PORTF_DATA_R & 0x10) == 0)
                 {
-                    vTaskDelay(pdMS_TO_TICKS(100));
-                    msg.cmd = LCD_IDLE;
-                    msg.value = 0;
-                    xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
-                    state = C_IDLE;
+                    vTaskDelay(pdMS_TO_TICKS(200));
+                    state = PROGRAM_START;
                 }
             }
 

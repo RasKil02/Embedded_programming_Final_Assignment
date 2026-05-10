@@ -129,26 +129,10 @@ static void setupHardware(void)
   uart0_init(19200, 8, 1, 0);
 }
 
-/* void test_task(void *pvParameters)
-{
-    vTaskDelay(pdMS_TO_TICKS(1000));
-
-    lcd_msg_t msg;
-    msg.cmd = LCD_DISPLAY_CASH_AMOUNT;
-    msg.value = 1;
-
-    xQueueSend(lcd_queue, &msg, portMAX_DELAY);
-
-    vTaskDelete(NULL);
-}*/
-
 int main(void)
 {
     setupHardware();
 
-    
-
-    // FINISHED:
     lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) );
     change_q = xQueueCreate(10, sizeof(INT8U));
@@ -160,10 +144,6 @@ int main(void)
     led_to_controller_q = xQueueCreate(10, sizeof( INT8U ));
     uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
 
-
-    //xTaskCreate( test_task, "test", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-
-    // FINISHED:
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( lcd_task, "LCD task", 512, NULL, LOW_PRIO, NULL );
