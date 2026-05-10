@@ -45,7 +45,7 @@ extern QueueHandle_t controller_queue;
 #define TRUE 1
 
 typedef enum
-{ 
+{
     LCD_IDLE,
     LCD_DISPLAY_CASH_OR_CARD,
     LCD_DISPLAY_CHOICE,
@@ -308,6 +308,7 @@ void lcd_task(void *pvParameters)
   INT8U last_button = 0;
   INT8U price = 0;
 
+
   while(1)
   {
     if(xQueueReceive(lcd_queue, &event, pdMS_TO_TICKS(10)))
@@ -404,7 +405,6 @@ void lcd_task(void *pvParameters)
                             lcd_print(cash_c);
 
                             change = cash - price;
-                            xQueueSend(controller_queue, &change, 10 / portTICK_RATE_MS);
 
                             done = 1;
                         }
@@ -439,7 +439,9 @@ void lcd_task(void *pvParameters)
             }
 
             clr_LCD();
-
+            event.cmd = LCD_RETURN_CASH;
+            event.value = 0;
+            xQueueSend(lcd_queue, &event, pdMS_TO_TICKS(10));
             break;
         }
 
@@ -464,7 +466,7 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Remove coffee           (SW1)");
+            lcd_print("Remove coffee       (SW1)");
             break;
         }
 
@@ -473,6 +475,8 @@ void lcd_task(void *pvParameters)
             clr_LCD();
             home_LCD();
             lcd_print("Returning       change...");
+            change = 10;
+            xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
             break;
         }
 
@@ -480,7 +484,7 @@ void lcd_task(void *pvParameters)
         {
             clr_LCD();
             home_LCD();
-            lcd_print("Please place cup      (SW1)");
+            lcd_print("Please place cup    (SW1)");
         }
       }
       vTaskDelay(1 / portTICK_RATE_MS);

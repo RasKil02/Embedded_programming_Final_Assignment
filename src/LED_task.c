@@ -192,6 +192,7 @@ void LED_task(void *pvParameters)
                 // Check change FIRST (priority)
                 if (xQueueReceive(change_q, &change, 0))
                 {
+                    GPIO_PORTF_DATA_R = 0x07;
                     change_value = change;
                     STATE = RETURN_CASH;
                     break;
@@ -258,7 +259,7 @@ void LED_task(void *pvParameters)
             case FILTER_COFFEE:
             {
                 // This returns 1 if the button was pushed and 0 if not
-                if (!button_pushed()) // Button pushed
+                if ((GPIO_PORTF_DATA_R & 0x01) == 0) // Button pushed
                 {
                     time_inactive = 0;
 
@@ -274,7 +275,7 @@ void LED_task(void *pvParameters)
                     }
                 }
 
-                if (button_pushed()) // Button not pushed
+                if ((GPIO_PORTF_DATA_R & 0x01) != 0) // Button not pushed
                 {
                     turn_off_led();
                     time_inactive += 100;

@@ -37,7 +37,7 @@ QueueHandle_t controller_queue;
 QueueHandle_t led_to_controller_q;
 
 typedef enum
-{ 
+{
     LCD_IDLE,
     LCD_DISPLAY_CASH_OR_CARD,
     LCD_DISPLAY_CHOICE,

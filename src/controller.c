@@ -64,7 +64,6 @@ typedef enum {
     C_DETERMINE_PAYMENT_METHOD,
     C_DISPLAY_AMOUNT_INSERTED,
     C_RETURNING_CASH,
-    C_DISPLAY_CASH,
     C_RETURN_CHANGE_LED,
     C_ENTER_CARD_NUMBER_AND_PIN,
     C_SEND_WAIT_FOR_CUP,
@@ -85,7 +84,7 @@ typedef struct {
 } uart_product_t;
 
 typedef enum
-{ 
+{
     LCD_IDLE,
     LCD_DISPLAY_CASH_OR_CARD,
     LCD_DISPLAY_CHOICE,
@@ -156,7 +155,7 @@ void controller_task(void *pvParameters)
                 state = C_IDLE;
                 break;
             }
-            
+
             case C_IDLE:
             {
                 if (xQueueReceive(key_queue, &user_choice, 10 / portTICK_PERIOD_MS))
@@ -165,7 +164,7 @@ void controller_task(void *pvParameters)
                     msg.cmd = LCD_DISPLAY_CHOICE;
                     msg.value = user_choice;
                     xQueueSend(lcd_queue, &msg, portMAX_DELAY);
-                    
+
                     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
                     state = C_DISPLAY_PAYMENT_OPTIONS;
@@ -214,37 +213,28 @@ void controller_task(void *pvParameters)
                 msg.value = user_choice;
 
                 xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
-                
+
                 state = C_RETURNING_CASH;
 
                 break;
             }
-            
+
             case C_RETURNING_CASH :
             {
-                if (xQueueReceive(controller_queue, &change, pdMS_TO_TICKS(100)))
-                {                
-                    // We get to here, but it never changes state to C_DISPLAY_CASH    
-                    state = C_DISPLAY_CASH;
+                if (xQueueReceive(controller_queue, &change, pdMS_TO_TICKS(10)))
+                {
+                    // We get to here, but it never changes state to C_RETURN_CHANGE_LED
+                    state = C_RETURN_CHANGE_LED;
                 }
 
                 break;
             }
-            
-            // We never get here even though we somehow get into the if statement in C_RETURNING_CASH
-            case C_DISPLAY_CASH :
-            {
-                msg.cmd = LCD_RETURN_CASH;
-                msg.value = 0;
-                xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
 
-                state = C_RETURN_CHANGE_LED;
-                break; 
-            }
 
-            case C_RETURN_CHANGE_LED : 
+            case C_RETURN_CHANGE_LED :
             {
                 xQueueSend(change_q, &change, pdMS_TO_TICKS(10));
+                state = C_SEND_WAIT_FOR_CUP;
                 break;
             }
 
@@ -320,7 +310,7 @@ void controller_task(void *pvParameters)
                 break;
             }
 
-            case C_DISPLAY_DISPENSING : 
+            case C_DISPLAY_DISPENSING :
             {
                 msg.cmd = LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED;
                 msg.value = 0;
@@ -350,7 +340,7 @@ void controller_task(void *pvParameters)
                 break;
             }
 
-            case C_LISTEN_UNTIL_FINISHED : 
+            case C_LISTEN_UNTIL_FINISHED :
             {
                 if (xQueueReceive(led_to_controller_q, &message, pdMS_TO_TICKS(10)))
                 {
@@ -366,6 +356,7 @@ void controller_task(void *pvParameters)
             {
                 if ((GPIO_PORTF_DATA_R & 0x10) == 0)
                 {
+                    vTaskDelay(pdMS_TO_TICKS(50));
                     msg.cmd = LCD_IDLE;
                     msg.value = 0;
                     xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
