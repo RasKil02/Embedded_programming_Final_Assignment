@@ -212,20 +212,25 @@ void controller_task(void *pvParameters)
                 msg.cmd = LCD_DISPLAY_CASH_AMOUNT;
                 msg.value = user_choice;
 
-                xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+                xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(1));
 
-                state = C_RETURNING_CASH;
+                if (xQueueReceive(controller_queue, &change, 1 / portTICK_RATE_MS))
+                {
+                    // We get to here, but it never changes state to C_RETURN_CHANGE_LED
+                    change_for_return = change;
+                    state = C_RETURNING_CASH;
+                }
 
                 break;
             }
 
             case C_RETURNING_CASH :
             {
-                if (xQueueReceive(controller_queue, &change, pdMS_TO_TICKS(10)))
-                {
-                    // We get to here, but it never changes state to C_RETURN_CHANGE_LED
-                    state = C_RETURN_CHANGE_LED;
-                }
+                msg.cmd = LCD_RETURN_CASH;
+                msg.value = 0;
+                xQueueSend(lcd_queue, &msg, 10 / portTICK_RATE_MS);
+
+                state = C_RETURN_CHANGE_LED;
 
                 break;
             }
@@ -233,7 +238,7 @@ void controller_task(void *pvParameters)
 
             case C_RETURN_CHANGE_LED :
             {
-                xQueueSend(change_q, &change, pdMS_TO_TICKS(10));
+                xQueueSend(change_q, &change_for_return, pdMS_TO_TICKS(10));
                 state = C_SEND_WAIT_FOR_CUP;
                 break;
             }
@@ -356,7 +361,7 @@ void controller_task(void *pvParameters)
             {
                 if ((GPIO_PORTF_DATA_R & 0x10) == 0)
                 {
-                    vTaskDelay(pdMS_TO_TICKS(50));
+                    vTaskDelay(pdMS_TO_TICKS(100));
                     msg.cmd = LCD_IDLE;
                     msg.value = 0;
                     xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
@@ -366,7 +371,7 @@ void controller_task(void *pvParameters)
 
         }
 
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(1));
 
     }
 

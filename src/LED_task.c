@@ -190,7 +190,7 @@ void LED_task(void *pvParameters)
             case IDLE:
             {
                 // Check change FIRST (priority)
-                if (xQueueReceive(change_q, &change, 0))
+                if (xQueueReceive(change_q, &change, pdMS_TO_TICKS(10)))
                 {
                     GPIO_PORTF_DATA_R = 0x07;
                     change_value = change;

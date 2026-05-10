@@ -307,6 +307,7 @@ void lcd_task(void *pvParameters)
   INT16S encoder_value;
   INT8U last_button = 0;
   INT8U price = 0;
+  INT8U dummy = 0;
 
 
   while(1)
@@ -367,81 +368,73 @@ void lcd_task(void *pvParameters)
 
         case LCD_DISPLAY_CASH_AMOUNT :
         {
-            INT8U done = 0;
-
-            choice = event.value;
-
-            if(choice == '1')
-                price = 15;
-
-            if(choice == '2')
-                price = 27;
-
-            if(choice == '3')
-                price = 3;
-
-            cash = 0;
-
-            clr_LCD();
-            home_LCD();
-
-            while(!done)
+            if (dummy == 0)
             {
-                // button pressed
-                if((GPIO_PORTF_DATA_R & 0x01) == 0)
+                choice = event.value;
+
+                if(choice == '1')
+                    price = 15;
+
+                if(choice == '2')
+                    price = 27;
+
+                if(choice == '3')
+                    price = 3;
+
+                cash = 0;
+
+                clr_LCD();
+                home_LCD();
+
+                dummy = 1;
+            }
+            
+            // button pressed
+            if((GPIO_PORTF_DATA_R & 0x01) == 0)
+            {
+                if(cash >= price)
                 {
-                    if((GPIO_PORTF_DATA_R & 0x01) == 0)
-                    {
-                        if(cash >= price)
-                        {
-                            clr_LCD();
-                            home_LCD();
-
-                            lcd_print("       paid");
-
-                            move_LCD(0,1);
-
-                            sprintf(cash_c, "%d DKK", cash);
-                            lcd_print(cash_c);
-
-                            change = cash - price;
-
-                            done = 1;
-                        }
-                        else
-                        {
-                            clr_LCD();
-                            home_LCD();
-
-                            lcd_print("     too low");
-
-                            move_LCD(0,1);
-
-                            sprintf(cash_c, "%d DKK", cash);
-                            lcd_print(cash_c);
-                        }
-                    }
-                }
-
-                // encoder update
-                if(xQueueReceive(encoder_queue,
-                                &encoder_value,
-                                pdMS_TO_TICKS(1)))
-                {
-                    cash = encoder_value;
-
                     clr_LCD();
                     home_LCD();
+
+                    lcd_print("       paid");
+
+                    move_LCD(0,1);
+
+                    sprintf(cash_c, "%d DKK", cash);
+                    lcd_print(cash_c);
+
+                    change = cash - price;
+
+                    xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
+                }
+                else
+                {
+                    clr_LCD();
+                    home_LCD();
+
+                    lcd_print("     too low");
+
+                    move_LCD(0,1);
 
                     sprintf(cash_c, "%d DKK", cash);
                     lcd_print(cash_c);
                 }
             }
 
-            clr_LCD();
-            event.cmd = LCD_RETURN_CASH;
-            event.value = 0;
-            xQueueSend(lcd_queue, &event, pdMS_TO_TICKS(10));
+            // encoder update
+            if(xQueueReceive(encoder_queue,
+                            &encoder_value,
+                            pdMS_TO_TICKS(1)))
+            {
+                cash = encoder_value;
+
+                clr_LCD();
+                home_LCD();
+
+                sprintf(cash_c, "%d DKK", cash);
+                lcd_print(cash_c);
+            }
             break;
         }
 
@@ -487,7 +480,7 @@ void lcd_task(void *pvParameters)
             lcd_print("Please place cup    (SW1)");
         }
       }
-      vTaskDelay(1 / portTICK_RATE_MS);
+      vTaskDelay(pdMS_TO_TICKS(1));
     }
   }
 }
