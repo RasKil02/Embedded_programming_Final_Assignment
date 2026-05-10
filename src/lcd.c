@@ -1,21 +1,21 @@
 /*****************************************************************************
-* University of Southern Denmark
-* Embedded C Programming (ECP)
-*
-* MODULENAME.: leds.c
-*
-* PROJECT....: ECP
-*
-* DESCRIPTION: See module specification file (.h-file).
-*
-* Change Log:
-******************************************************************************
-* Date    Id    Change
-* YYMMDD
-* --------------------
-* 050128  KA    Module created.
-*
-*****************************************************************************/
+ * University of Southern Denmark
+ * Embedded C Programming (ECP)
+ *
+ * MODULENAME.: leds.c
+ *
+ * PROJECT....: ECP
+ *
+ * DESCRIPTION: See module specification file (.h-file).
+ *
+ * Change Log:
+ ******************************************************************************
+ * Date    Id    Change
+ * YYMMDD
+ * --------------------
+ * 050128  KA    Module created.
+ *
+ *****************************************************************************/
 
 /***************************** Include files *******************************/
 // For freeRTOS
@@ -32,9 +32,8 @@
 #include "lcd.h"
 #include <stdio.h>
 
-
 /*****************************    Defines    *******************************/
-#define QUEUE_LEN   128
+#define QUEUE_LEN 128
 
 extern QueueHandle_t lcd_queue;
 extern QueueHandle_t encoder_queue;
@@ -63,189 +62,189 @@ typedef enum
     LCD_PLACE_CUP,
 } lcd_states;
 
-typedef struct {
+typedef struct
+{
     lcd_states cmd;
     int value;
     int value2;
 } lcd_msg_t;
 
-
 /*****************************   Constants   *******************************/
-const INT8U LCD_init_sequense[]=
-{
-  0x30,     // Reset
-  0x30,     // Reset
-  0x30,     // Reset
-  0x20,     // Set 4bit interface
-  0x28,     // 2 lines Display
-  0x0C,     // Display ON, Cursor OFF, Blink OFF
-  0x06,     // Cursor Increment
-  0x01,     // Clear Display
-  0x02,   // Home
-  0xFF      // stop
+const INT8U LCD_init_sequense[] =
+    {
+        0x30, // Reset
+        0x30, // Reset
+        0x30, // Reset
+        0x20, // Set 4bit interface
+        0x28, // 2 lines Display
+        0x0C, // Display ON, Cursor OFF, Blink OFF
+        0x06, // Cursor Increment
+        0x01, // Clear Display
+        0x02, // Home
+        0xFF  // stop
 };
 
 /*****************************   Variables   *******************************/
-//INT8U LCD_buf[QUEUE_LEN];
-//INT8U LCD_buf_head = 0;
-//INT8U LCD_buf_tail = 0;
-//INT8U LCD_buf_len  = 0;
+// INT8U LCD_buf[QUEUE_LEN];
+// INT8U LCD_buf_head = 0;
+// INT8U LCD_buf_tail = 0;
+// INT8U LCD_buf_len  = 0;
 
 INT8U LCD_init;
 
-
-
 void move_LCD(INT8U x, INT8U y)
 /*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : -
-******************************************************************************/
+ *   Input    : -
+ *   Output   : -
+ *   Function : -
+ ******************************************************************************/
 {
     INT8U pos = (y == 0) ? (0x80 + x) : (0x80 + 0x40 + x);
     wr_ctrl_LCD(pos);
 }
 
-void wr_ctrl_LCD_low( INT8U Ch )
+void wr_ctrl_LCD_low(INT8U Ch)
 /*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Write low part of control data to LCD.
-******************************************************************************/
+ *   Input    : -
+ *   Output   : -
+ *   Function : Write low part of control data to LCD.
+ ******************************************************************************/
 {
-  INT8U temp;
-  volatile int i;
+    INT8U temp;
+    volatile int i;
 
-  temp = GPIO_PORTC_DATA_R & 0x0F;
-  temp  = temp | ((Ch & 0x0F) << 4);
-  GPIO_PORTC_DATA_R  = temp;
-  for( i=0; i<1000; i )
-      i++;
-  GPIO_PORTD_DATA_R &= 0xFB;        // Select Control mode, write
-  for( i=0; i<1000; i )
-      i++;
-  GPIO_PORTD_DATA_R |= 0x08;        // Set E High
+    temp = GPIO_PORTC_DATA_R & 0x0F;
+    temp = temp | ((Ch & 0x0F) << 4);
+    GPIO_PORTC_DATA_R = temp;
+    for (i = 0; i < 10000; i)
+        i++;
+    GPIO_PORTD_DATA_R &= 0xFB; // Select Control mode, write
+    for (i = 0; i < 10000; i)
+        i++;
+    GPIO_PORTD_DATA_R |= 0x08; // Set E High
 
-  for( i=0; i<1000; i )
-      i++;
+    for (i = 0; i < 10000; i)
+        i++;
 
-  GPIO_PORTD_DATA_R &= 0xF7;        // Set E Low
+    GPIO_PORTD_DATA_R &= 0xF7; // Set E Low
 
-  for( i=0; i<1000; i )
-      i++;
+    for (i = 0; i < 10000; i)
+        i++;
 }
 
-void wr_ctrl_LCD_high( INT8U Ch )
+void wr_ctrl_LCD_high(INT8U Ch)
 /*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Write high part of control data to LCD.
-******************************************************************************/
+ *   Input    : -
+ *   Output   : -
+ *   Function : Write high part of control data to LCD.
+ ******************************************************************************/
 {
-  wr_ctrl_LCD_low(( Ch & 0xF0 ) >> 4 );
+    wr_ctrl_LCD_low((Ch & 0xF0) >> 4);
 }
 
-void out_LCD_low( INT8U Ch )
+void out_LCD_low(INT8U Ch)
 /*****************************************************************************
-*   Input    : Mask
-*   Output   : -
-*   Function : Send low part of character to LCD.
-*              This function works only in 4 bit data mode.
-******************************************************************************/
+ *   Input    : Mask
+ *   Output   : -
+ *   Function : Send low part of character to LCD.
+ *              This function works only in 4 bit data mode.
+ ******************************************************************************/
 {
-  INT8U temp;
+    INT8U temp;
 
-  temp = GPIO_PORTC_DATA_R & 0x0F;
-  GPIO_PORTC_DATA_R  = temp | ((Ch & 0x0F) << 4);
-  //GPIO_PORTD_DATA_R &= 0x7F;        // Select write
-  GPIO_PORTD_DATA_R |= 0x04;        // Select data mode
-  GPIO_PORTD_DATA_R |= 0x08;        // Set E High
-  GPIO_PORTD_DATA_R &= 0xF7;        // Set E Low
+    temp = GPIO_PORTC_DATA_R & 0x0F;
+    GPIO_PORTC_DATA_R = temp | ((Ch & 0x0F) << 4);
+    // GPIO_PORTD_DATA_R &= 0x7F;        // Select write
+    GPIO_PORTD_DATA_R |= 0x04; // Select data mode
+    GPIO_PORTD_DATA_R |= 0x08; // Set E High
+    GPIO_PORTD_DATA_R &= 0xF7; // Set E Low
 }
 
-void out_LCD_high( INT8U Ch )
+void out_LCD_high(INT8U Ch)
 /*****************************************************************************
-*   Input    : Mask
-*   Output   : -
-*   Function : Send high part of character to LCD.
-*              This function works only in 4 bit data mode.
-******************************************************************************/
+ *   Input    : Mask
+ *   Output   : -
+ *   Function : Send high part of character to LCD.
+ *              This function works only in 4 bit data mode.
+ ******************************************************************************/
 {
-  out_LCD_low((Ch & 0xF0) >> 4);
+    out_LCD_low((Ch & 0xF0) >> 4);
 }
 
-void wr_ctrl_LCD( INT8U Ch )
+void wr_ctrl_LCD(INT8U Ch)
 /*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Write control data to LCD.
-******************************************************************************/
+ *   Input    : -
+ *   Output   : -
+ *   Function : Write control data to LCD.
+ ******************************************************************************/
 {
-  static INT8U Mode4bit = FALSE;
-  INT16U i;
+    static INT8U Mode4bit = FALSE;
+    INT16U i;
 
-  wr_ctrl_LCD_high( Ch );
-  if( Mode4bit )
-  {
-    for(i=0; i<1000; i++);
-    wr_ctrl_LCD_low( Ch );
-  }
-  else
-  {
-    if( (Ch & 0x30) == 0x20 )
-      Mode4bit = TRUE;
-  }
+    wr_ctrl_LCD_high(Ch);
+    if (Mode4bit)
+    {
+        for (i = 0; i < 10000; i++)
+            ;
+        wr_ctrl_LCD_low(Ch);
+    }
+    else
+    {
+        if ((Ch & 0x30) == 0x20)
+            Mode4bit = TRUE;
+    }
 }
 
 void clr_LCD()
 /*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Clear LCD.
-******************************************************************************/
+ *   Input    : -
+ *   Output   : -
+ *   Function : Clear LCD.
+ ******************************************************************************/
 {
-  wr_ctrl_LCD( 0x01 );
+    wr_ctrl_LCD(0x01);
 }
 
 void home_LCD()
 /*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Return cursor to the home position.
-******************************************************************************/
+ *   Input    : -
+ *   Output   : -
+ *   Function : Return cursor to the home position.
+ ******************************************************************************/
 {
-  wr_ctrl_LCD( 0x02 );
+    wr_ctrl_LCD(0x02);
 }
 
-void Set_cursor( INT8U Ch )
+void Set_cursor(INT8U Ch)
 /*****************************************************************************
-*   Input    : New Cursor position
-*   Output   : -
-*   Function : Place cursor at given position.
-******************************************************************************/
+ *   Input    : New Cursor position
+ *   Output   : -
+ *   Function : Place cursor at given position.
+ ******************************************************************************/
 {
-  wr_ctrl_LCD( Ch );
+    wr_ctrl_LCD(Ch);
 }
 
-void out_LCD( INT8U Ch )
+void out_LCD(INT8U Ch)
 /*****************************************************************************
-*   Input    : -
-*   Output   : -
-*   Function : Write control data to LCD.
-******************************************************************************/
+ *   Input    : -
+ *   Output   : -
+ *   Function : Write control data to LCD.
+ ******************************************************************************/
 {
-  INT16U i;
+    INT16U i;
 
-  out_LCD_high( Ch );
-  for(i=0; i<1000; i++);
-  out_LCD_low( Ch );
+    out_LCD_high(Ch);
+    for (i = 0; i < 1000; i++)
+        ;
+    out_LCD_low(Ch);
 }
 
 void lcd_init()
 {
     LCD_init = 0;
 
-    while(LCD_init_sequense[LCD_init] != 0xFF)
+    while (LCD_init_sequense[LCD_init] != 0xFF)
     {
         wr_ctrl_LCD(LCD_init_sequense[LCD_init++]);
         vTaskDelay(5 / portTICK_RATE_MS);
@@ -254,20 +253,20 @@ void lcd_init()
 
 void lcd_print(char *str)
 {
-  int pos1 = 0;
-  int pos2 = 0;
+    int pos1 = 0;
+    int pos2 = 0;
 
-    while(*str)
+    while (*str)
     {
         move_LCD(pos1, pos2);
         out_LCD(*str);
         str++;
         pos1++;
-        if(pos1 > 15)
+        if (pos1 > 15)
         {
             pos1 = 0;
             pos2++;
-            if(pos2 > 1)
+            if (pos2 > 1)
             {
                 pos2 = 0;
             }
@@ -283,14 +282,14 @@ void slide_text(char *str)
         clr_LCD();
         home_LCD();
 
-        move_LCD(offset, 0);   // flyt startposition
-        lcd_print(str);        // print hele string
+        move_LCD(offset, 0); // flyt startposition
+        lcd_print(str);      // print hele string
 
         vTaskDelay(3000 / portTICK_RATE_MS);
 
         offset++;
 
-        if (offset > 15)   // LCD bredde (typisk 16)
+        if (offset > 15) // LCD bredde (typisk 16)
         {
             offset = 0;
         }
@@ -299,227 +298,236 @@ void slide_text(char *str)
 
 void lcd_task(void *pvParameters)
 /*****************************************************************************
-*   Input    :
-*   Output   :
-*   Function :
-******************************************************************************/
+ *   Input    :
+ *   Output   :
+ *   Function :
+ ******************************************************************************/
 {
-  lcd_msg_t event;
-  lcd_init();
-  int cash = 0;
-  char cash_c[16];
-  char price_buffer[16];
-  int choice;
-  INT8U change = 0;
-  INT16S encoder_value;
-  INT8U last_button = 0;
-  INT8U price = 0;
-  INT8U dummy = 0;
+    lcd_msg_t event;
+    lcd_init();
+    int cash = 0;
+    char cash_c[16];
+    char price_buffer[16];
+    int choice;
+    INT8U change = 0;
+    INT16S encoder_value;
+    INT8U last_button = 0;
+    INT8U price = 0;
+    INT8U dummy = 0;
 
-
-  while(1)
-  {
-    if(xQueueReceive(lcd_queue, &event, pdMS_TO_TICKS(10)))
+    while (1)
     {
-      switch(event.cmd)
-      {
-        case LCD_START_SCREEN :
+        if (xQueueReceive(lcd_queue, &event, pdMS_TO_TICKS(10)))
         {
-            clr_LCD();
-            home_LCD();
-            lcd_print("SW1:Order coffeeSW2:uart");
-            break;
-        }
-        case LCD_IDLE :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Choose Coffee:  1: E 2: L 3: F");
-            break;
-        }
-        case LCD_UART_PRODUCT :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("1: E  2: L  3: FUse putty");
-            break;
-        }
-
-        case LCD_UART_PRICE : 
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Enter new price");
-            break;
-        }
-
-        case LCD_SHOWCASE_NEW_PRICE :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("New price set!");
-
-            vTaskDelay(pdMS_TO_TICKS(1000)); // Showcase new price for 2 sec
-
-            break;
-        }
-
-        case LCD_DISPLAY_CASH_OR_CARD :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Pay with:       1: Cash 2: Card"); // 15 char and then it switches lines
-            break;
-        }
-
-        case LCD_DISPLAY_CHOICE :
-        {
-            clr_LCD();
-            home_LCD();
-
-            choice = event.value; // 1, 2 or 3
-
-            if (choice == '1')
+            switch (event.cmd)
             {
-                lcd_print("You chose:      Espresso");
-
+            case LCD_START_SCREEN:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("SW1:Order coffeeSW2:uart");
+                break;
             }
-            else if (choice == '2')
+            case LCD_IDLE:
             {
-                lcd_print("You chose:      Latte");
+                clr_LCD();
+                home_LCD();
+                lcd_print("Choose Coffee:  1: E 2: L 3: F");
+                break;
             }
-            else if (choice == '3')
+            case LCD_UART_PRODUCT:
             {
-                lcd_print("You chose:      Filter");
+                clr_LCD();
+                home_LCD();
+                lcd_print("1: E  2: L  3: FUse putty");
+                break;
             }
 
-            break;
-        }
-
-        case LCD_DISPLAY_ENTER_CASH_INFO :
-        {
-            clr_LCD();
-            home_LCD();
-
-            lcd_print("Use encoder to  insert cash");
-            break;
-        }
-
-        case LCD_DISPLAY_CASH_AMOUNT :
-        {
-            if (dummy == 0)
+            case LCD_UART_PRICE:
             {
-                choice = event.value;
+                clr_LCD();
+                home_LCD();
+                lcd_print("Enter new price");
+                break;
+            }
 
-                if(choice == '1')
-                    price = espresso;
+            case LCD_SHOWCASE_NEW_PRICE:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("New price set!");
 
-                if(choice == '2')
-                    price = latte;
+                vTaskDelay(pdMS_TO_TICKS(1000)); // Showcase new price for 2 sec
 
-                if(choice == '3')
-                    price = filter;
+                break;
+            }
 
-                cash = 0;
+            case LCD_DISPLAY_CASH_OR_CARD:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("Pay with:       1: Cash 2: Card"); // 15 char and then it switches lines
+                break;
+            }
 
+            case LCD_DISPLAY_CHOICE:
+            {
                 clr_LCD();
                 home_LCD();
 
-                dummy = 1;
-            }
-            
-            // button pressed
-            if((GPIO_PORTF_DATA_R & 0x01) == 0)
-            {
-                if(cash >= price)
+                choice = event.value; // 1, 2 or 3
+
+                if (choice == '1')
                 {
-                    clr_LCD();
-                    home_LCD();
-
-                    lcd_print("       paid");
-
-                    move_LCD(0,1);
-
-                    sprintf(cash_c, "%d DKK", cash);
-                    lcd_print(cash_c);
-
-                    change = cash - price;
-
-                    xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
+                    lcd_print("You chose:      Espresso");
                 }
-                else
+                else if (choice == '2')
                 {
-                    clr_LCD();
-                    home_LCD();
-
-                    lcd_print("     too low");
-
-                    move_LCD(0,1);
-
-                    sprintf(cash_c, "%d DKK", cash);
-                    lcd_print(cash_c);
+                    lcd_print("You chose:      Latte");
                 }
+                else if (choice == '3')
+                {
+                    lcd_print("You chose:      Filter");
+                }
+
+                break;
             }
 
-            // encoder update
-            if(xQueueReceive(encoder_queue,
-                            &encoder_value,
-                            pdMS_TO_TICKS(1)))
+            case LCD_DISPLAY_ENTER_CASH_INFO:
             {
-                cash = encoder_value;
-
                 clr_LCD();
                 home_LCD();
 
-                sprintf(cash_c, "%d DKK", cash);
-                lcd_print(cash_c);
+                lcd_print("Use encoder to  insert cash");
+                break;
             }
-            break;
-        }
 
-        case LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Please Enter    card nr. & PIN:");
-            break;
-        }
+            case LCD_DISPLAY_CASH_AMOUNT:
+            {
+                BOOLEAN BUTTON_PRESSED = 0;
+                if (dummy == 0)
+                {
+                    choice = event.value;
 
+                    if (choice == '1')
+                        price = espresso;
 
-        case LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Dispensing...");
-            break;
-        }
+                    if (choice == '2')
+                        price = latte;
 
-        case LCD_DISPLAY_CHOICE_PRODUCED :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Remove coffee       (SW1)");
-            break;
-        }
+                    if (choice == '3')
+                        price = filter;
 
-        case LCD_RETURN_CASH :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Returning       change...");
-            change = 10;
-            xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
-            break;
-        }
+                    cash = 0;
 
-        case LCD_PLACE_CUP :
-        {
-            clr_LCD();
-            home_LCD();
-            lcd_print("Please place cup    (SW1)");
+                    clr_LCD();
+                    home_LCD();
+
+                    dummy = 1;
+                }
+
+                // button pressed
+                if ((GPIO_PORTF_DATA_R & 0x01) == 0)
+                {
+                    if (cash >= price)
+                    {
+                        clr_LCD();
+                        home_LCD();
+
+                        lcd_print("       paid");
+
+                        move_LCD(0, 1);
+
+                        sprintf(cash_c, "%d DKK", cash);
+                        cash_c[15] = '\0';
+                        lcd_print(cash_c);
+
+                        change = cash - price;
+
+                        xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
+                        BUTTON_PRESSED = 1;
+                    }
+                    else
+                    {
+                        clr_LCD();
+                        home_LCD();
+
+                        lcd_print("     too low");
+
+                        move_LCD(0, 1);
+
+                        sprintf(cash_c, "%d DKK", cash);
+                        lcd_print(cash_c);
+
+                        event.cmd = LCD_DISPLAY_CASH_AMOUNT;
+                        xQueueSend(lcd_queue, &event, 0);
+                    }
+                }
+
+                // encoder update
+                if (xQueueReceive(encoder_queue,
+                                  &encoder_value,
+                                  0))
+                {
+                    cash = encoder_value;
+
+                    clr_LCD();
+                    home_LCD();
+
+                    sprintf(cash_c, "%d DKK", cash);
+                    cash_c[15] = '\0';
+                    lcd_print(&cash_c[0]);
+                }
+                if (BUTTON_PRESSED == 0)
+                {
+                    event.cmd = LCD_DISPLAY_CASH_AMOUNT;
+                    xQueueSend(lcd_queue, &event, 0);
+                }
+                break;
+            }
+
+            case LCD_DISPLAY_ENTER_CARD_NUMBER_AND_PIN:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("Please Enter    card nr. & PIN:");
+                break;
+            }
+
+            case LCD_DISPLAY_CHOICE_IS_BEING_PRODUCED:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("Dispensing...");
+                break;
+            }
+
+            case LCD_DISPLAY_CHOICE_PRODUCED:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("Remove coffee       (SW1)");
+                break;
+            }
+
+            case LCD_RETURN_CASH:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("Returning       change...");
+                change = 10;
+                xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));
+                break;
+            }
+
+            case LCD_PLACE_CUP:
+            {
+                clr_LCD();
+                home_LCD();
+                lcd_print("Please place cup    (SW1)");
+            }
+            }
+            vTaskDelay(pdMS_TO_TICKS(100));
         }
-      }
-      vTaskDelay(pdMS_TO_TICKS(1));
     }
-  }
 }

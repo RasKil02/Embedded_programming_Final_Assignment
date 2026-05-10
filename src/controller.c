@@ -282,7 +282,7 @@ void controller_task(void *pvParameters)
 
             case C_IDLE:
             {
-                if (xQueueReceive(key_queue, &user_choice, 10 / portTICK_PERIOD_MS))
+                if (xQueueReceive(key_queue, &user_choice, portMAX_DELAY))
                 {
                     drink_chosen = user_choice;
                     msg.cmd = LCD_DISPLAY_CHOICE;
@@ -337,7 +337,7 @@ void controller_task(void *pvParameters)
 
                 xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(1));
 
-                if (xQueueReceive(controller_queue, &change, 1 / portTICK_RATE_MS))
+                if (xQueueReceive(controller_queue, &change, portMAX_DELAY))
                 {
                     // We get to here, but it never changes state to C_RETURN_CHANGE_LED
                     change_for_return = change;

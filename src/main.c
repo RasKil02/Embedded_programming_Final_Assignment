@@ -19,7 +19,7 @@
 #include "uart.h"
 
 /***************************    Defines     **********************************/
-#define USERTASK_STACK_SIZE configMINIMAL_STACK_SIZE
+#define USERTASK_STACK_SIZE 120 
 #define IDLE_PRIO 0
 #define LOW_PRIO  1
 #define MED_PRIO  2
@@ -166,7 +166,7 @@ int main(void)
     // FINISHED:
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( lcd_task, "LCD task", 512, NULL, LOW_PRIO, NULL );
     xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
