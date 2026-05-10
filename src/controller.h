@@ -32,6 +32,9 @@
 /*****************************    Defines    *******************************/
 
 /*****************************   Constants   *******************************/
+extern INT8U espresso;
+extern INT8U latte;
+extern INT8U filter;
 
 /*****************************   Functions   *******************************/
 void controller_task(void *pvParameters);

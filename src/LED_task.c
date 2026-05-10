@@ -53,7 +53,6 @@ extern QueueHandle_t purchased_products_q;
 extern QueueHandle_t time_q;
 extern QueueHandle_t led_to_controller_q;
 
-
 typedef enum {
     IDLE,
     RETURN_CASH,
@@ -192,7 +191,6 @@ void LED_task(void *pvParameters)
                 // Check change FIRST (priority)
                 if (xQueueReceive(change_q, &change, pdMS_TO_TICKS(10)))
                 {
-                    GPIO_PORTF_DATA_R = 0x07;
                     change_value = change;
                     STATE = RETURN_CASH;
                     break;
@@ -371,7 +369,7 @@ void LED_task(void *pvParameters)
                 break;
         }
 
-        vTaskDelay(10 / portTICK_RATE_MS);
+        vTaskDelay(pdMS_TO_TICKS(10)); // Remember that this timing needs to be fit into the state machine
     }
 }
 

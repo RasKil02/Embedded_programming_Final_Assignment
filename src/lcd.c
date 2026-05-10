@@ -28,6 +28,7 @@
 #include "emp_type.h"
 
 // Own includes
+#include "controller.h"
 #include "lcd.h"
 #include <stdio.h>
 
@@ -46,7 +47,11 @@ extern QueueHandle_t controller_queue;
 
 typedef enum
 {
+    LCD_START_SCREEN,
     LCD_IDLE,
+    LCD_UART_PRODUCT,
+    LCD_UART_PRICE,
+    LCD_SHOWCASE_NEW_PRICE,
     LCD_DISPLAY_CASH_OR_CARD,
     LCD_DISPLAY_CHOICE,
     LCD_DISPLAY_ENTER_CASH_INFO,
@@ -58,11 +63,12 @@ typedef enum
     LCD_PLACE_CUP,
 } lcd_states;
 
-
 typedef struct {
     lcd_states cmd;
     int value;
+    int value2;
 } lcd_msg_t;
+
 
 /*****************************   Constants   *******************************/
 const INT8U LCD_init_sequense[]=
@@ -302,6 +308,7 @@ void lcd_task(void *pvParameters)
   lcd_init();
   int cash = 0;
   char cash_c[16];
+  char price_buffer[16];
   int choice;
   INT8U change = 0;
   INT16S encoder_value;
@@ -316,11 +323,44 @@ void lcd_task(void *pvParameters)
     {
       switch(event.cmd)
       {
+        case LCD_START_SCREEN :
+        {
+            clr_LCD();
+            home_LCD();
+            lcd_print("SW1:Order coffeeSW2:uart");
+            break;
+        }
         case LCD_IDLE :
         {
             clr_LCD();
             home_LCD();
             lcd_print("Choose Coffee:  1: E 2: L 3: F");
+            break;
+        }
+        case LCD_UART_PRODUCT :
+        {
+            clr_LCD();
+            home_LCD();
+            lcd_print("1: E  2: L  3: FUse putty");
+            break;
+        }
+
+        case LCD_UART_PRICE : 
+        {
+            clr_LCD();
+            home_LCD();
+            lcd_print("Enter new price");
+            break;
+        }
+
+        case LCD_SHOWCASE_NEW_PRICE :
+        {
+            clr_LCD();
+            home_LCD();
+            lcd_print("New price set!");
+
+            vTaskDelay(pdMS_TO_TICKS(1000)); // Showcase new price for 2 sec
+
             break;
         }
 
@@ -341,16 +381,16 @@ void lcd_task(void *pvParameters)
 
             if (choice == '1')
             {
-                lcd_print("You chose:      E15DKK");
+                lcd_print("You chose:      Espresso");
 
             }
             else if (choice == '2')
             {
-                lcd_print("You chose:      L27DKK");
+                lcd_print("You chose:      Latte");
             }
             else if (choice == '3')
             {
-                lcd_print("You chose:      F3DKKCL");
+                lcd_print("You chose:      Filter");
             }
 
             break;
@@ -365,7 +405,6 @@ void lcd_task(void *pvParameters)
             break;
         }
 
-
         case LCD_DISPLAY_CASH_AMOUNT :
         {
             if (dummy == 0)
@@ -373,13 +412,13 @@ void lcd_task(void *pvParameters)
                 choice = event.value;
 
                 if(choice == '1')
-                    price = 15;
+                    price = espresso;
 
                 if(choice == '2')
-                    price = 27;
+                    price = latte;
 
                 if(choice == '3')
-                    price = 3;
+                    price = filter;
 
                 cash = 0;
 

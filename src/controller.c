@@ -59,6 +59,10 @@ extern QueueHandle_t led_to_controller_q;
 
 typedef enum {
     PROGRAM_START,
+    C_INIT,
+    C_UART,
+    C_CHANGE_PRICE,
+    C_SHOWCASE_NEW_PRICE,
     C_IDLE,
     C_DISPLAY_PAYMENT_OPTIONS,
     C_DETERMINE_PAYMENT_METHOD,
@@ -85,7 +89,11 @@ typedef struct {
 
 typedef enum
 {
+    LCD_START_SCREEN,
     LCD_IDLE,
+    LCD_UART_PRODUCT,
+    LCD_UART_PRICE,
+    LCD_SHOWCASE_NEW_PRICE,
     LCD_DISPLAY_CASH_OR_CARD,
     LCD_DISPLAY_CHOICE,
     LCD_DISPLAY_ENTER_CASH_INFO,
@@ -100,6 +108,7 @@ typedef enum
 typedef struct {
     lcd_states cmd;
     int value;
+    int value2;
 } lcd_msg_t;
 
 typedef enum {
@@ -123,9 +132,9 @@ typedef struct {
 #define STANDARD_COFFEE_AMOUNT 1        // standard amount of coffee in cl for espresso and latte
 
 /*****************************   Variables   ***********************/
-const INT8U espresso = 15;
-const INT8U latte = 27;
-const INT8U filter = 3;
+INT8U espresso = 15;
+INT8U latte = 27;
+INT8U filter = 3;
 
 void controller_task(void *pvParameters)
 {
@@ -139,6 +148,9 @@ void controller_task(void *pvParameters)
     INT8U cardNr;
     INT8U drink_chosen;
     INT8U message;
+    INT8U uart_input;
+    INT8U u_coffee_choice;
+    INT8U u_new_price;
 
     // Initial state
     state = PROGRAM_START;
@@ -148,11 +160,123 @@ void controller_task(void *pvParameters)
         switch(state)
         {   case PROGRAM_START:
             {
-                // Display welcome message and ask user to choose coffee
-                msg.cmd = LCD_IDLE;
+                msg.cmd = LCD_START_SCREEN;
                 msg.value = 0;
                 xQueueSend(lcd_queue, &msg, portMAX_DELAY);
-                state = C_IDLE;
+
+                state = C_INIT;
+                break;
+            }
+
+            case C_INIT : 
+            {
+                if ((GPIO_PORTF_DATA_R & 0x10) == 0)
+                {
+                    msg.cmd = LCD_IDLE;
+                    msg.value = 0;
+                    xQueueSend(lcd_queue, &msg, portMAX_DELAY);
+                    state = C_IDLE;
+                }
+
+                if ((GPIO_PORTF_DATA_R & 0x01) == 0)
+                {
+                    msg.cmd = LCD_UART_PRODUCT;
+                    msg.value = 0;
+                    xQueueSend(lcd_queue, &msg, portMAX_DELAY);
+                    state = C_UART;
+                }
+                break;
+            }
+
+            case C_UART :
+            {
+                if (xQueueReceive(uart_queue_handler, &uart_input, pdMS_TO_TICKS(1)))
+                {
+                    if (uart_input == '1') 
+                    {
+                        u_coffee_choice = 1; // Espresso
+                        state = C_CHANGE_PRICE;
+                        msg.cmd = LCD_UART_PRICE;
+                        msg.value = 0;
+                        xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+                        xQueueReset(uart_queue_handler);
+                    }
+                    if (uart_input == '2')
+                    {
+                        u_coffee_choice = 2; // Latte
+                        state = C_CHANGE_PRICE;
+                        msg.cmd = LCD_UART_PRICE;
+                        msg.value = 0;
+                        xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+                        xQueueReset(uart_queue_handler);
+                    }
+                    if (uart_input == '3')
+                    {
+                        u_coffee_choice = 3; // Filter
+                        state = C_CHANGE_PRICE;
+                        msg.cmd = LCD_UART_PRICE;
+                        msg.value = 0;
+                        xQueueSend(lcd_queue, &msg, pdMS_TO_TICKS(10));
+                        xQueueReset(uart_queue_handler);
+                    }
+                }
+                break;
+            }
+            
+            case C_CHANGE_PRICE :
+            {
+                static INT8U digit_count = 0;
+                static int temp_price = 0;
+
+                if (xQueueReceive(uart_queue_handler,
+                                &uart_input,
+                                pdMS_TO_TICKS(1)))
+                {
+                    // Ensure received char is digit
+                    if (uart_input >= '0' && uart_input <= '9')
+                    {
+                        temp_price = temp_price * 10;
+                        temp_price += (uart_input - '0');
+
+                        digit_count++;
+                    }
+
+                    // Full 3-digit price received
+                    if (digit_count >= 3)
+                    {
+                        u_new_price = temp_price;
+
+                        if (u_coffee_choice == 1)
+                        {
+                            espresso = u_new_price;
+                        }
+
+                        if (u_coffee_choice == 2)
+                        {
+                            latte = u_new_price;
+                        }
+
+                        if (u_coffee_choice == 3)
+                        {
+                            filter = u_new_price;
+                        }
+
+                        // reset parser
+                        digit_count = 0;
+                        temp_price = 0;
+
+                        state = C_SHOWCASE_NEW_PRICE;
+                    }
+                }
+
+                break;
+            }
+
+            case C_SHOWCASE_NEW_PRICE :
+            {
+                msg.cmd = LCD_SHOWCASE_NEW_PRICE;
+                xQueueSend(lcd_queue, &msg, 10 / portTICK_PERIOD_MS);
+                state = PROGRAM_START;
                 break;
             }
 
@@ -169,7 +293,6 @@ void controller_task(void *pvParameters)
 
                     state = C_DISPLAY_PAYMENT_OPTIONS;
                 }
-                // Wait for user input
                 break;
             }
 
@@ -238,7 +361,7 @@ void controller_task(void *pvParameters)
 
             case C_RETURN_CHANGE_LED :
             {
-                xQueueSend(change_q, &change_for_return, pdMS_TO_TICKS(10));
+                xQueueSend(change_q, &change, pdMS_TO_TICKS(10));
                 state = C_SEND_WAIT_FOR_CUP;
                 break;
             }

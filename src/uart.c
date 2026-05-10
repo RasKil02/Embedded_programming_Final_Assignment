@@ -60,19 +60,8 @@ BOOLEAN uart0_get_q( INT8U *pch )
 }
 
 BOOLEAN uart0_rx_rdy()
-/*****************************************************************************
-*   Function : See module specification (.h-file).
-*****************************************************************************/
 {
-  return( UART0_FR_R & UART_FR_RXFF );
-}
-
-INT8U uart0_getc()
-/*****************************************************************************
-*   Function : See module specification (.h-file).
-*****************************************************************************/
-{
-  return ( UART0_DR_R );
+    return !(UART0_FR_R & UART_FR_RXFE);
 }
 
 BOOLEAN uart0_tx_rdy()
@@ -215,22 +204,35 @@ extern void uart0_init( INT32U baud_rate, INT8U databits, INT8U stopbits, INT8U 
   UART0_CTL_R  |= (UART_CTL_UARTEN | UART_CTL_TXE );  // Enable UART
 }
 
-extern void uart_rx_task( void *pvParameters )
+BOOLEAN uart0_getc(INT8U *data)
+{
+    if (!(UART0_FR_R & UART_FR_RXFE))
+    {
+        *data = (INT8U)(UART0_DR_R & 0xFF);
+        return 1;
+    }
+
+    return 0;
+}
+
+extern void uart_rx_task(void *pvParameters)
+{
 /*****************************************************************************
 *   Function : See module specification (.h-file).
 *****************************************************************************/
-{
-    while( 1 )
+    INT8U ch;
+
+    while(1)
     {
-        if( uart0_rx_rdy() )
+        if(uart0_getc(&ch))
         {
-            INT8U ch = uart0_getc();
-            xQueueSend( uart_queue_handler, &ch, portMAX_DELAY );
+            xQueueSend(uart_queue_handler,
+                       &ch,
+                       portMAX_DELAY);
         }
         else
         {
-            const TickType_t Delay = 1 / portTICK_PERIOD_MS;            // 1ms Delay
-            vTaskDelay( Delay );
+            vTaskDelay(pdMS_TO_TICKS(1));
         }
     }
 }
@@ -247,7 +249,7 @@ extern void uart_tx_task( void *pvParameters )
 
         if( xQueueReceive( uart_queue_handler, &ch, portMAX_DELAY) == pdPASS)     // If possible to get data from queue
         {
-            while( !uart0_tx_rdy() )                                        // Wait as long UART is not ready to send
+            while( !uart0_tx_rdy() )    // checks if the uart buffer is empty and ready                                 // Wait as long UART is not ready to send
             {
                 const TickType_t Delay = 1 / portTICK_PERIOD_MS;            // 1ms Delay
                 vTaskDelay( Delay );

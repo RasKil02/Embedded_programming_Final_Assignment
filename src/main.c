@@ -38,7 +38,11 @@ QueueHandle_t led_to_controller_q;
 
 typedef enum
 {
+    LCD_START_SCREEN,
     LCD_IDLE,
+    LCD_UART_PRODUCT,
+    LCD_UART_PRICE,
+    LCD_SHOWCASE_NEW_PRICE,
     LCD_DISPLAY_CASH_OR_CARD,
     LCD_DISPLAY_CHOICE,
     LCD_DISPLAY_ENTER_CASH_INFO,
@@ -53,6 +57,7 @@ typedef enum
 typedef struct {
     lcd_states cmd;
     int value;
+    int value2;
 } lcd_msg_t;
 
 typedef enum {
@@ -121,6 +126,7 @@ static void setupHardware(void)
   LED_init();
   init_gpio();
   Encoder_init();
+  uart0_init(19200, 8, 1, 0);
 }
 
 /* void test_task(void *pvParameters)
@@ -140,7 +146,7 @@ int main(void)
 {
     setupHardware();
 
-    // uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
+    
 
     // FINISHED:
     lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
@@ -152,9 +158,9 @@ int main(void)
     encoder_button_queue = xQueueCreate( 10, sizeof( INT8U ) );
     controller_queue = xQueueCreate(10, sizeof( INT8U ));
     led_to_controller_q = xQueueCreate(10, sizeof( INT8U ));
+    uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
 
-    // xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
-    // xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+
     //xTaskCreate( test_task, "test", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
 
     // FINISHED:
@@ -163,6 +169,8 @@ int main(void)
     xTaskCreate( lcd_task, "LCD task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
     xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
 
     vTaskStartScheduler();
     return 0;
