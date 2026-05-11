@@ -4,16 +4,16 @@
 *
 * MODULENAME.: uart.h
 *
-* PROJECT....: EMP
+* PROJECT....: Final Assignment - Embedded Programming
 *
-* DESCRIPTION: Test.
+* DESCRIPTION: Header file for uart module.
 *
 * Change Log:
 ******************************************************************************
 * Date    Id    Change
-* YYMMDD
+* 2026-05-10
 * --------------------
-* 150228  MoH   Module created.
+* 150321  MoH   Module created.
 *
 *****************************************************************************/
 
@@ -34,6 +34,7 @@
 BOOLEAN uart0_put_q( INT8U );
 BOOLEAN uart0_get_q( INT8U* );
 BOOLEAN uart0_getc(INT8U *data);
+void uart0_puts(char *str);
 
 void uart_tx_task(void *pvParameters);
 void uart_rx_task(void *pvParameters);

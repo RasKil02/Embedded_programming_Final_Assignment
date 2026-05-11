@@ -1,17 +1,17 @@
 /*****************************************************************************
 * University of Southern Denmark
-* Embedded Programming (EMP)
+* Embedded Programming 
 *
 * MODULENAME.: key.h
 *
-* PROJECT....: EMP
+* PROJECT....: Final Project - Embedded Programming
 *
 * DESCRIPTION: Test.
 *
 * Change Log:
 ******************************************************************************
 * Date    Id    Change
-* YYMMDD
+* 2026-05-10
 * --------------------
 * 150321  MoH   Module created.
 *

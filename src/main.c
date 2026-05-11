@@ -1,6 +1,21 @@
-/**
- * main.c
- */
+/*****************************************************************************
+* University of Southern Denmark
+* Embedded Programming
+*
+* MODULENAME.: main.c
+*
+* PROJECT....: Final Assignment - Embedded Programming
+*
+* DESCRIPTION: Main module. Initializes the hardware and starts the tasks.
+*
+*****************************************************************************
+* Date    Id    Change
+* 2026-05-10
+* --------------------
+* 150321  MoH   Module created.
+*
+*****************************************************************************/
+
 
  /***************************    Includes     **********************************/
 #include "FreeRTOS.h"
@@ -17,6 +32,7 @@
 #include "lcd.h"
 #include "encoder.h"
 #include "uart.h"
+#include "time_of_day_task.h"
 
 /***************************    Defines     **********************************/
 #define USERTASK_STACK_SIZE 120 
@@ -38,8 +54,11 @@ QueueHandle_t led_to_controller_q;
 
 typedef enum
 {
+    LCD_ENTER_CURRENT_TIME,
     LCD_START_SCREEN,
     LCD_IDLE,
+    LCD_CHOOSE_UART_OPTION,
+    LCD_UART_REPORT,
     LCD_UART_PRODUCT,
     LCD_UART_PRICE,
     LCD_SHOWCASE_NEW_PRICE,
@@ -53,6 +72,8 @@ typedef enum
     LCD_RETURN_CASH,
     LCD_PLACE_CUP,
 } lcd_states;
+
+
 
 typedef struct {
     lcd_states cmd;
@@ -116,11 +137,9 @@ static void setupHardware(void)
 /*****************************************************************************
 *   Input    :  -
 *   Output   :  -
-*   Function :
+*   Function : Initializes the hardware
 *****************************************************************************/
 {
-  // TODO: Put hardware configuration and initialisation in here
-
   // Warning: If you do not initialize the hardware clock, the timings will be inaccurate
   init_systick();
   LED_init();
@@ -130,27 +149,35 @@ static void setupHardware(void)
 }
 
 int main(void)
+/*****************************************************************************
+*   Input    :  -
+*   Output   :  -
+*   Function : Initializes the hardware and starts the tasks.
+*****************************************************************************/
 {
     setupHardware();
 
+    // Create the queues
     lcd_queue = xQueueCreate(10, sizeof(lcd_msg_t));
     key_queue =  xQueueCreate( 10, sizeof( INT8U ) );
     change_q = xQueueCreate(10, sizeof(INT8U));
     purchased_products_q = xQueueCreate(10, sizeof(product_msg_t));
-    time_q = xQueueCreate(10, sizeof(int));
+    time_q = xQueueCreate(10, sizeof(int)); // is not used, should meaby be deleted
     encoder_queue = xQueueCreate( 10, sizeof( INT16S ) );
-    encoder_button_queue = xQueueCreate( 10, sizeof( INT8U ) );
+    encoder_button_queue = xQueueCreate( 10, sizeof( INT8U ) ); // is not used, should be deleted
     controller_queue = xQueueCreate(10, sizeof( INT8U ));
     led_to_controller_q = xQueueCreate(10, sizeof( INT8U ));
     uart_queue_handler = xQueueCreate( 10, sizeof( INT8U ) );
 
+    // Create the tasks
     xTaskCreate( key_task, "Keyboard_task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( LED_task, "LED task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( lcd_task, "LCD task", 512, NULL, LOW_PRIO, NULL );
+    xTaskCreate( lcd_task, "LCD task", 512, NULL, LOW_PRIO, NULL );                                 // Stack size increased to 512 for LCD task, as it was running out of stack space with 120.
     xTaskCreate( encoder_task, "encoder task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
-    xTaskCreate( controller_task, "controller task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
+    xTaskCreate( controller_task, "controller task", 512, NULL, LOW_PRIO, NULL);
     xTaskCreate( uart_tx_task, "UART_tx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
     xTaskCreate( uart_rx_task, "UART_rx", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL );
+    xTaskCreate (time_of_day_task, "Time of day task", USERTASK_STACK_SIZE, NULL, LOW_PRIO, NULL);
 
     vTaskStartScheduler();
     return 0;

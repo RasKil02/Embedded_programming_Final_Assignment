@@ -1,19 +1,19 @@
 /*****************************************************************************
 * University of Southern Denmark
-* Embedded Programming (EMP)
+* Embedded Programming
 *
 * MODULENAME.: emp.c
 *
-* PROJECT....: EMP
+* PROJECT....: Final Assignment - Embedded Programming
 *
-* DESCRIPTION: This file implements a UART driver for FreeRTOS
+* DESCRIPTION: This file implements a UART driver for FreeRTOS.
 *
 * Change Log:
 *****************************************************************************
 * Date    Id    Change
-* YYMMDD
+* 2026-05-10
 * --------------------
-* 150228  MoH   Module created.
+* 150321  MoH   Module created.
 *
 *****************************************************************************/
 
@@ -30,7 +30,6 @@
 // Own includes
 #include "uart.h"
 
-
 /*****************************    Defines    *******************************/
 #define QUEUE_LEN 128
 
@@ -44,7 +43,9 @@ extern QueueHandle_t uart_queue_handler;
 
 BOOLEAN uart0_put_q( INT8U ch )
 /*****************************************************************************
-*   Function : See module specification (.h-file).
+*   Input    :  - ch: The character to be sent via UART.
+*   Output   :  - 
+*   Function :  - This function sends a character to the UART transmit queue. It will block until there is space in the queue.
 *****************************************************************************/
 {
     xQueueSend( uart_queue_handler, &ch, portMAX_DELAY );
@@ -53,7 +54,9 @@ BOOLEAN uart0_put_q( INT8U ch )
 
 BOOLEAN uart0_get_q( INT8U *pch )
 /*****************************************************************************
-*   Function : See module specification (.h-file).
+*   Input    :  - pch: Pointer to a variable where the received character will be stored.
+*   Output   :  - 
+*   Function :  - This function receives a character from the UART receive queue. It will block until there is a character available in the queue.
 *****************************************************************************/
 {
     return( xQueueReceive( uart_queue_handler, pch, portMAX_DELAY ) );
@@ -66,7 +69,9 @@ BOOLEAN uart0_rx_rdy()
 
 BOOLEAN uart0_tx_rdy()
 /*****************************************************************************
-*   Function : See module specification (.h-file).
+*   Input    :  - 
+*   Output   :  - 
+*   Function :  - This function checks if the UART transmit buffer is empty and ready to accept a new character. It returns true if the buffer is empty, and false otherwise.
 *****************************************************************************/
 {
   return( UART0_FR_R & UART_FR_TXFE );
@@ -74,15 +79,30 @@ BOOLEAN uart0_tx_rdy()
 
 void uart0_putc( INT8U ch )
 /*****************************************************************************
-*   Function : See module specification (.h-file).
+*   Input    :  - ch: The character to be sent via UART.
+*   Output   :  -  
+*   Function :  - This function sends a character directly to the UART data register. 
 *****************************************************************************/
 {
   UART0_DR_R = ch;
 }
 
-INT32U lcrh_databits( INT8U antal_databits )
+void uart0_puts(char *str)
+{
+    while(*str)
+    {
+        while(!uart0_tx_rdy())
+        {
+        }
+
+        uart0_putc(*str);
+        str++;
+    }
+}
+
+INT32U lcrh_databits( INT8U number_of_databits )
 /*****************************************************************************
-*   Input    :
+*   Input    :  - number_of_databits: The desired number of data bits (5, 6, 7, or 8).
 *   Output   :
 *   Function : sets bit 5 and 6 according to the wanted number of data bits.
 *               5: bit5 = 0, bit6 = 0.
@@ -92,14 +112,14 @@ INT32U lcrh_databits( INT8U antal_databits )
 *              all other bits are returned = 0
 ******************************************************************************/
 {
-  if(( antal_databits < 5 ) || ( antal_databits > 8 ))
-    antal_databits = 8;
-  return(( (INT32U)antal_databits - 5 ) << 5 );  // Control bit 5-6, WLEN
+  if(( number_of_databits < 5 ) || ( number_of_databits > 8 ))
+    number_of_databits = 8;
+  return(( (INT32U)number_of_databits - 5 ) << 5 );  // Control bit 5-6, WLEN
 }
 
-INT32U lcrh_stopbits( INT8U antal_stopbits )
+INT32U lcrh_stopbits( INT8U number_of_stopbits )
 /*****************************************************************************
-*   Input    :
+*   Input    : - number_of_stopbits: The desired number of stop bits (1 or 2).
 *   Output   :
 *   Function : sets bit 3 according to the wanted number of stop bits.
 *               1 stpobit:  bit3 = 0 (default).
@@ -107,7 +127,7 @@ INT32U lcrh_stopbits( INT8U antal_stopbits )
 *              all other bits are returned = 0
 ******************************************************************************/
 {
-  if( antal_stopbits == 2 )
+  if( number_of_stopbits == 2 )
     return( 0x00000008 );       // return bit 3 = 1
   else
     return( 0x00000000 );       // return all zeros
@@ -115,7 +135,7 @@ INT32U lcrh_stopbits( INT8U antal_stopbits )
 
 INT32U lcrh_parity( INT8U parity )
 /*****************************************************************************
-*   Input    :
+*   Input    : - parity: The desired parity mode ('e' for even, 'o' for odd, '0' for mark, '1' for space, 'n' for none).
 *   Output   :
 *   Function : sets bit 1, 2 and 7 to the wanted parity.
 *               'e':  00000110b.
@@ -171,8 +191,13 @@ void uart0_fifos_disable()
 
 extern void uart0_init( INT32U baud_rate, INT8U databits, INT8U stopbits, INT8U parity )
 /*****************************************************************************
-*   Function : See module specification (.h-file).
-*****************************************************************************/
+*   Input    : - baud_rate: The desired baud rate for UART communication.
+*               - databits: The desired number of data bits.
+*               - stopbits: The desired number of stop bits.
+*               - parity: The desired parity mode.
+*   Output   :
+*   Function : - This function initializes the UART0 module with the specified baud rate, number of data bits, stop bits, and parity. 
+******************************************************************************/
 {
   INT32U BRD;
 
@@ -218,8 +243,11 @@ BOOLEAN uart0_getc(INT8U *data)
 extern void uart_rx_task(void *pvParameters)
 {
 /*****************************************************************************
-*   Function : See module specification (.h-file).
-*****************************************************************************/
+*   Input    :
+*   Output   :
+*   Function : - This function continuously checks for incoming data on the UART. 
+*                If data is available, it reads the character and sends it to a FreeRTOS queue for processing by other tasks.
+******************************************************************************/
     INT8U ch;
 
     while(1)
@@ -239,8 +267,10 @@ extern void uart_rx_task(void *pvParameters)
 
 extern void uart_tx_task( void *pvParameters )
 /*****************************************************************************
-*   Function : This function sends data from queue via UART
-*****************************************************************************/
+*   Input    : - pvParameters: Pointer to task parameters.
+*   Output   :
+*   Function : - This function continuously waits for characters to be sent to the UART transmit queue.
+******************************************************************************/
 {
     INT8U ch;
 

@@ -1,28 +1,21 @@
 /*****************************************************************************
 * University of Southern Denmark
-* Embedded C Programming (ECP)
+* Embedded  Programming 
 *
 * MODULENAME.: LED_task.h
 *
-* PROJECT....: EMP final assignment
+* PROJECT....: Final Assignment - Embedded Programming
 *
 * DESCRIPTION: Used for all LED related functions
 *
 * Change Log:
 ******************************************************************************
 * Date    Id    Change
-* YYMMDD
+* 2026-05-10
 * --------------------
-* 040526  KOES    Module created.
+* 150321  MoH   Module created.
 *
 *****************************************************************************/
-
-/*
- * LED_task.h
- *
- *  Created on: 4. maj 2026
- *      Author: Karl
- */
 
 #ifndef LED_TASK_H_
 #define LED_TASK_H_
@@ -45,6 +38,7 @@ void turn_off_led(void);
 
 void LED_init(void);
 INT8U button_pushed(void);
+extern INT8U uart_amount;
 
 void LED_task(void *pvParameters);
 

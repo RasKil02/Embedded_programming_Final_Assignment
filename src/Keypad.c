@@ -1,17 +1,17 @@
 /*****************************************************************************
 * University of Southern Denmark
-* Embedded Programming (EMP)
+* Embedded Programming 
 *
 * MODULENAME.: key.c
 *
-* PROJECT....: EMP
+* PROJECT....: Final Assignment - Embedded Programming
 *
 * DESCRIPTION: See module specification file (.h-file).
 *
 * Change Log:
 *****************************************************************************
 * Date    Id    Change
-* YYMMDD
+* 2026-05-10
 * --------------------
 * 150321  MoH   Module created.
 *

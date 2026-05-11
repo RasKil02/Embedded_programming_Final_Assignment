@@ -1,12 +1,18 @@
 /*****************************************************************************
 * University of Southern Denmark
-* Embedded Programming (EMP)
+* Embedded Programming
 *
 * MODULENAME.: encoder.h
 *
-* PROJECT....: EMP
+* PROJECT....: Final Assignment - Embedded Programming
 *
 * DESCRIPTION: Header file for encoder module
+*
+*****************************************************************************
+* Date    Id    Change
+* YYMMDD
+* --------------------
+* 060526  KOES    Module created.
 *
 *****************************************************************************/
 

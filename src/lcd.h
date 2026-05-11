@@ -2,18 +2,18 @@
 * University of Southern Denmark
 * Embedded C Programming (ECP)
 *
-* MODULENAME.: leds.h
+* MODULENAME.: lcd.h
 *
-* PROJECT....: ECP
+* PROJECT....: Final Assignment - Embedded Programming
 *
-* DESCRIPTION: Test.
+* DESCRIPTION: Test module for the LCD display
 *
 * Change Log:
 ******************************************************************************
 * Date    Id    Change
-* YYMMDD
+* 2026-05-10
 * --------------------
-* 050128  KA    Module created.
+* 150321  MoH   Module created.
 *
 *****************************************************************************/
 
