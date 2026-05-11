@@ -304,8 +304,7 @@ void LED_task(void *pvParameters)
 
                 vTaskDelay(90 / portTICK_RATE_MS);
                 time += 100;
-                prepaid_amount -= 0.1; // kr.
-
+                prepaid_amount -= filter / 30.0f;; 
                 break;
             }
 
