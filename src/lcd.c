@@ -97,7 +97,7 @@ INT8U LCD_init;
 void move_LCD(INT8U x, INT8U y)
 /*****************************************************************************
  *   Input    : - x: column (0-15), y: row (0-1)
- *   Output   : - 
+ *   Output   : -
  *   Function : - Move cursor to given position.
  ******************************************************************************/
 {
@@ -108,7 +108,7 @@ void move_LCD(INT8U x, INT8U y)
 void wr_ctrl_LCD_low(INT8U Ch)
 /*****************************************************************************
  *   Input    : - Ch: Mask for low part of control data
- *   Output   : - 
+ *   Output   : -
  *   Function : Write low part of control data to LCD.
  ******************************************************************************/
 {
@@ -137,7 +137,7 @@ void wr_ctrl_LCD_low(INT8U Ch)
 void wr_ctrl_LCD_high(INT8U Ch)
 /*****************************************************************************
  *   Input    : - Ch: Mask for high part of control data
- *   Output   : - 
+ *   Output   : -
  *   Function : Write high part of control data to LCD.
  ******************************************************************************/
 {
@@ -165,7 +165,7 @@ void out_LCD_low(INT8U Ch)
 void out_LCD_high(INT8U Ch)
 /*****************************************************************************
  *   Input    : - Ch: Mask for high part of character data
- *   Output   : - 
+ *   Output   : -
  *   Function : Send high part of character to LCD.
  *              This function works only in 4 bit data mode.
  ******************************************************************************/
@@ -176,7 +176,7 @@ void out_LCD_high(INT8U Ch)
 void wr_ctrl_LCD(INT8U Ch)
 /*****************************************************************************
  *   Input    : - Ch: Control data to write to LCD
- *   Output   : - 
+ *   Output   : -
  *   Function : Write control data to LCD.
  ******************************************************************************/
 {
@@ -199,7 +199,7 @@ void wr_ctrl_LCD(INT8U Ch)
 
 void clr_LCD()
 /*****************************************************************************
- *   Input    : - 
+ *   Input    : -
  *   Output   : -
  *   Function : Clear LCD.
  ******************************************************************************/
@@ -210,7 +210,7 @@ void clr_LCD()
 void home_LCD()
 /*****************************************************************************
  *   Input    : -
- *   Output   : - 
+ *   Output   : -
  *   Function : Return cursor to the home position.
  ******************************************************************************/
 {
@@ -220,7 +220,7 @@ void home_LCD()
 void Set_cursor(INT8U Ch)
 /*****************************************************************************
  *   Input    : New Cursor position
- *   Output   : - 
+ *   Output   : -
  *   Function : Place cursor at given position.
  ******************************************************************************/
 {
@@ -244,8 +244,8 @@ void out_LCD(INT8U Ch)
 
 void lcd_init()
 /*****************************************************************************
- *   Input    : - 
- *   Output   : - 
+ *   Input    : -
+ *   Output   : -
  *   Function : - Initialize LCD by sending a sequence of control commands.
  ******************************************************************************/
 {
@@ -300,7 +300,7 @@ void slide_text(char *str)
         home_LCD();
 
         move_LCD(offset, 0);
-        lcd_print(str);      
+        lcd_print(str);
 
         vTaskDelay(3000 / portTICK_RATE_MS);
 
@@ -316,8 +316,8 @@ void slide_text(char *str)
 void lcd_task(void *pvParameters)
 /*****************************************************************************
  *   Input    : - pvParameters: Pointer to task parameters (not used in this implementation)
- *   Output   : - 
- *   Function : - Main task function for handling LCD operations. 
+ *   Output   : -
+ *   Function : - Main task function for handling LCD operations.
  ******************************************************************************/
 {
     lcd_msg_t event;
@@ -344,7 +344,7 @@ void lcd_task(void *pvParameters)
                 home_LCD();
                 lcd_print("Enter time: HHMM");
                 break;
-            }            
+            }
 
             case LCD_START_SCREEN :                                     // Start screen with options to order coffee or access UART features
             {
@@ -393,7 +393,7 @@ void lcd_task(void *pvParameters)
                 break;
             }
 
-            case LCD_SHOWCASE_NEW_PRICE:                                // Screen showcasing the new price after it has been set via UART 
+            case LCD_SHOWCASE_NEW_PRICE:                                // Screen showcasing the new price after it has been set via UART
             {
                 clr_LCD();
                 home_LCD();
@@ -417,7 +417,7 @@ void lcd_task(void *pvParameters)
                 clr_LCD();
                 home_LCD();
 
-                choice = event.value;                                  
+                choice = event.value;
 
                 if (choice == '1')
                 {
@@ -468,7 +468,7 @@ void lcd_task(void *pvParameters)
                     dummy = 1;
                 }
 
-                
+
                 if ((GPIO_PORTF_DATA_R & 0x01) == 0)                    // Check if the button is pressed (active low)
                 {
                     if (cash >= price)
@@ -488,6 +488,8 @@ void lcd_task(void *pvParameters)
 
                         xQueueSend(controller_queue, &change, pdMS_TO_TICKS(10));       // Send the change amount to the controller task
                         xQueueReset(encoder_queue);                                     // Reset the encoder queue to clear any remaining values
+
+                        xQueueReset(lcd_queue);
                         dummy = 0;
                         amount = 0;
                         BUTTON_PRESSED = 1;
@@ -503,9 +505,8 @@ void lcd_task(void *pvParameters)
 
                         sprintf(cash_c, "%d DKK", cash);
                         lcd_print(cash_c);
-
                         event.cmd = LCD_DISPLAY_CASH_AMOUNT;
-                        xQueueSend(lcd_queue, &event, 0);                               
+                        xQueueSend(lcd_queue, &event, 0);
                     }
                 }
 
@@ -546,7 +547,7 @@ void lcd_task(void *pvParameters)
                 break;
             }
 
-            case LCD_DISPLAY_CHOICE_PRODUCED:                       // Screen indicating that the user's coffee choice has been produced and prompting them to remove their coffee. 
+            case LCD_DISPLAY_CHOICE_PRODUCED:                       // Screen indicating that the user's coffee choice has been produced and prompting them to remove their coffee.
             {
                 clr_LCD();
                 home_LCD();
